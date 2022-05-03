@@ -78,15 +78,15 @@ while (true)
         }
 
         var salt = RandomNumberGenerator.GetBytes(16);
-        string passwordHash = Convert.ToBase64String(KeyDerivation.Pbkdf2(
+        string passwordHash = Convert.ToHexString(KeyDerivation.Pbkdf2(
             password: password.ToString(),
             salt: salt,
             prf: KeyDerivationPrf.HMACSHA256,
             iterationCount: 100000,
             numBytesRequested: 256 / 8));
 
-        Console.WriteLine($"password: {password.ToString()}");
-        Console.WriteLine($"salt: {Convert.ToBase64String(salt)}");
+        Console.WriteLine($"password: {password}");
+        Console.WriteLine($"salt: {Convert.ToHexString(salt)}");
         Console.WriteLine($"password hash: {passwordHash}");
         Console.WriteLine();
     }

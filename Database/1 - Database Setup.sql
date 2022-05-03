@@ -64,3 +64,20 @@ CREATE TABLE [Reactions] (
     CONSTRAINT    [FK_Reaction_ImageId]      FOREIGN KEY    ([ImageId])      REFERENCES    [Images]([Id])
 );
 GO
+
+-- SuperAdmin password: =8K4Kbzt44,Wvv
+INSERT INTO [Accounts] (
+    [Email],
+    [Salt],
+    [PasswordHash],
+    [Username],
+    [Role]
+)
+VALUES (
+    'superadmin@example.com',
+    0x476F95CB4B4A27F4F08853C327EFD808,
+    0xB22C85A69EE37B7C5702753E0BD0E5A5AAADF9B21B4DD40C6B3097962A188D8A,
+    'SuperAdmin',
+    0
+);
+GO
