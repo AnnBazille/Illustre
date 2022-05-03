@@ -81,3 +81,8 @@ VALUES (
     0
 );
 GO
+
+-- Roles:
+-- SuperAdmin = 0
+-- Editor = 1
+-- User = 2
