@@ -1,9 +1,9 @@
-﻿@model SignInRequest
+﻿@model SignUpRequest
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Registration";
 }
 
-<form method="post" action="/Account/SignIn">
+<form method="post" action="/Account/Register">
     
     <div class="container illustre-form">
         <div class="row g-1">
@@ -11,7 +11,7 @@
                 if (Model != null && !Model.IsFirstAttempt)
                 {
                     <div class="col-12 alert alert-light alert-dismissible fade show" role="alert">
-                        <span>User wasn't found.</span>
+                        <span>Email is already used.</span>
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                 }
@@ -20,13 +20,13 @@
                 <input type="email" class="form-control" id="email" placeholder="email" asp-for="Email"/>
             </div>
             <div class="col-12">
+                <input type="text" class="form-control" id="username" placeholder="username" asp-for="Username"/>
+            </div>
+            <div class="col-12">
                 <input type="password" class="form-control" id="password" placeholder="password" asp-for="Password"/>
             </div>
-            <div class="col-6 d-grid">
-                <a role="button" class="btn btn-outline-dark" asp-action="SignUp">Sign Up</a>
-            </div>
-            <div class="col-6 d-grid">
-                <button type="submit" class="btn btn-outline-dark">Sign In</button>
+            <div class="col-12 d-grid">
+                <button type="submit" class="btn btn-outline-dark">Sign Up</button>
             </div>
         </div>
     </div>

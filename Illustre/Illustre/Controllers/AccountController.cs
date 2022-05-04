@@ -7,64 +7,34 @@ using System.Diagnostics;
 
 namespace Illustre.Controllers;
 
-public class AccountController : Controller
+public class AccountController : CommonController
 {
-    private const string SessionCookie = "session-id";
-    private const string UsernameCookie = "username";
-    private readonly ILogger<AccountController> _logger;
-    private readonly AccountService _accountService;
-
-    public AccountController(
-        ILogger<AccountController> logger,
-        AccountService accountService)
-    {
-        _logger = logger;
-        _accountService = accountService;
-    }
+    public AccountController(AccountService accountService) : base(accountService) { }
 
     [HttpGet]
     public async Task<IActionResult> Index(SignInRequest request)
     {
-        if (Request.Cookies.TryGetValue(SessionCookie, out var cookie))
-        {
-            var role = await _accountService.TryGetRoleBySessionGuid(cookie!);
-            if (role != null)
-            {
-                var result = RedirectAuthenticated(role!.Value);
-                if (result != null)
-                {
-                    return result;
-                }
-            }
-        }
+        var redirect = await TryRedirect();
 
-        return View(request);
+        return redirect ?? View(request);
     }
 
     [HttpPost]
     public async Task<IActionResult> SignIn(SignInRequest request)
     {
+        var redirect = await TryRedirect();
+        if (redirect != null)
+        {
+            return redirect;
+        }
+
         if (ModelState.IsValid)
         {
             var response = await _accountService.TrySignIn(request);
 
             if (response != null)
             {
-                var options = new CookieOptions()
-                {
-                    Expires = response.Expires,
-                    Domain = Request.Host.Host,
-                };
-
-                Response.Cookies.Append(
-                    SessionCookie,
-                    response.SessionGuid,
-                    options);
-
-                Response.Cookies.Append(
-                    UsernameCookie,
-                    response.Username,
-                    options);
+                SetCookies(response);
 
                 var result = RedirectAuthenticated(response.Role);
                 if (result != null)
@@ -77,9 +47,40 @@ public class AccountController : Controller
         return RedirectPermanent("/Account/Index?isFirstAttempt=false");
     }
 
-    public async Task<IActionResult> SignUp()
+    [HttpGet]
+    public async Task<IActionResult> SignUp(SignUpRequest request)
     {
-        return View();
+        var redirect = await TryRedirect();
+
+        return redirect ?? View(request);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Register(SignUpRequest request)
+    {
+        var redirect = await TryRedirect();
+        if (redirect != null)
+        {
+            return redirect;
+        }
+
+        if (ModelState.IsValid)
+        {
+            var response = await _accountService.TrySignUp(request);
+
+            if (response != null)
+            {
+                SetCookies(response);
+
+                var result = RedirectAuthenticated(response.Role);
+                if (result != null)
+                {
+                    return result;
+                }
+            }
+        }
+
+        return RedirectPermanent("/Account/SignUp?isFirstAttempt=false");
     }
 
     public IActionResult Privacy()
@@ -91,26 +92,5 @@ public class AccountController : Controller
     public IActionResult Error()
     {
         return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-    }
-
-    private RedirectResult? RedirectAuthenticated(Role role)
-    {
-        switch (role)
-        {
-            case Role.SuperAdmin:
-                {
-                    return RedirectPermanent("/Main/SuperAdmin");
-                }
-            case Role.Editor:
-                {
-                    return RedirectPermanent("/Main/Editor");
-                }
-            case Role.User:
-                {
-                    return RedirectPermanent("/Main/User");
-                }
-        }
-
-        return null;
     }
 }

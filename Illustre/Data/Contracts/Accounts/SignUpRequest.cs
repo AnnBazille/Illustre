@@ -2,11 +2,14 @@
 
 namespace Data.Contracts.Accounts;
 
-public class SignInRequest : FailableRequest
+public class SignUpRequest : FailableRequest
 {
     [Required]
     public string Email { get; set; }
 
     [Required]
     public string Password { get; set; }
+
+    [Required]
+    public string Username { get; set; }
 }

@@ -23,4 +23,9 @@ public class AccountService
     {
         return await _accountRepository.TrySignIn(request);
     }
+
+    public async Task<SignInResponse?> TrySignUp(SignUpRequest request)
+    {
+        return await _accountRepository.TrySignUp(request);
+    }
 }

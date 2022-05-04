@@ -10,15 +10,15 @@ GO
 -- User = 2
 
 CREATE TABLE [Accounts] (
-    [Id]              INT             IDENTITY(1,1),
-    [Email]           VARCHAR(320)    NOT NULL,
-    [Salt]            CHAR(32)        NOT NULL,
-    [PasswordHash]    CHAR(64)        NOT NULL,
-    [Username]        VARCHAR(50)     NOT NULL,
-    [Role]            INT             NOT NULL,
-    [SessionGuid]     CHAR(32)        NULL,
-    [LastLogin]       DATETIME        NULL,
-    [IsActive]        BIT             NOT NULL          CONSTRAINT    [DF_Account_IsActive]    DEFAULT    1,
+    [Id]              INT              IDENTITY(1,1),
+    [Email]           VARCHAR(320)     NOT NULL,
+    [Salt]            CHAR(32)         NOT NULL,
+    [PasswordHash]    CHAR(64)         NOT NULL,
+    [Username]        NVARCHAR(MAX)    NOT NULL,
+    [Role]            INT              NOT NULL,
+    [SessionGuid]     CHAR(32)         NULL,
+    [LastLogin]       DATETIME         NULL,
+    [IsActive]        BIT              NOT NULL          CONSTRAINT    [DF_Account_IsActive]    DEFAULT    1,
 
     CONSTRAINT    [PK_Account]                PRIMARY KEY    ([Id]),
 	CONSTRAINT    [CHK_Account_Role]          CHECK          ([Role]            IN    (0,    1,    2)),

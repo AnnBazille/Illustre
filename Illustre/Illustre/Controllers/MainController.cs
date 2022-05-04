@@ -1,9 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Service;
 
 namespace Illustre.Controllers;
 
-public class MainController : Controller
+public class MainController : CommonController
 {
+    public MainController(AccountService accountService) : base(accountService) { }
+
     [HttpGet]
     public async Task<IActionResult> SuperAdmin()
     {
