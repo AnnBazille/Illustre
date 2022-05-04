@@ -12,7 +12,17 @@ public class MainController : CommonController
     {
         var redirect = await TryRedirect();
 
-        return redirect ?? View();
+        if (redirect == null)
+        {
+            return RedirectPermanent("/Account/Index");
+        }
+
+        if ((redirect as RedirectResult)!.Url != "/Main/SuperAdminMenu")
+        {
+            return redirect;
+        }
+
+        return View();
     }
 
     [HttpGet]
@@ -20,7 +30,17 @@ public class MainController : CommonController
     {
         var redirect = await TryRedirect();
 
-        return redirect ?? View();
+        if (redirect == null)
+        {
+            return RedirectPermanent("/Account/Index");
+        }
+
+        if ((redirect as RedirectResult)!.Url != "/Main/EditorMenu")
+        {
+            return redirect;
+        }
+
+        return View();
     }
 
     [HttpGet]
@@ -28,6 +48,16 @@ public class MainController : CommonController
     {
         var redirect = await TryRedirect();
 
-        return redirect ?? View();
+        if (redirect == null)
+        {
+            return RedirectPermanent("/Account/Index");
+        }
+
+        if ((redirect as RedirectResult)!.Url != "/Main/UserMenu")
+        {
+            return redirect;
+        }
+
+        return View();
     }
 }
