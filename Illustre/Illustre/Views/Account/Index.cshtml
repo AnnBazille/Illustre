@@ -1,0 +1,33 @@
+﻿@model SignInRequest
+@{
+    ViewData["Title"] = "Index";
+}
+
+<form method="post" action="/Account/SignIn">
+    
+    <div class="container illustre-form">
+        <div class="row g-1">
+            @{
+                if (Model != null && !Model.IsFirstAttempt)
+                {
+                    <div class="col-12 alert alert-light alert-dismissible fade show" role="alert">
+                        <span>User wasn't found.</span>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+            }
+            <div class="col-12">
+                <input type="email" class="form-control" id="email" placeholder="email" asp-for="Email"/>
+            </div>
+            <div class="col-12">
+                <input type="password" class="form-control" id="password" placeholder="password" asp-for="Password"/>
+            </div>
+            <div class="col-6 d-grid">
+                <button type="button" class="btn btn-outline-dark">Sign Up</button>
+            </div>
+            <div class="col-6 d-grid">
+                <button type="submit" class="btn btn-outline-dark">Sign In</button>
+            </div>
+        </div>
+    </div>
+</form>

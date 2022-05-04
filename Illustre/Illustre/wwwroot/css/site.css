@@ -16,3 +16,8 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+.illustre-form {
+    width: 576px;
+    max-width: 100%;
+}

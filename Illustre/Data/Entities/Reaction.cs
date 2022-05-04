@@ -1,6 +1,6 @@
 ﻿namespace Data.Entities;
 
-public class Reaction
+public class Reaction : BaseEntity
 {
     public int AccountId { get; set; }
 
