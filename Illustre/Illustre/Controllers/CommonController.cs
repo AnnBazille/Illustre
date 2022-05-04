@@ -11,6 +11,8 @@ public abstract class CommonController : Controller
 
     public const string UsernameCookie = "username";
 
+    public const string RoleCookie = "role";
+
     protected readonly AccountService _accountService;
 
     public CommonController(AccountService accountService)
@@ -73,6 +75,11 @@ public abstract class CommonController : Controller
         Response.Cookies.Append(
             UsernameCookie,
             response.Username,
+            options);
+
+        Response.Cookies.Append(
+            RoleCookie,
+            response.Role.ToString(),
             options);
     }
 }
