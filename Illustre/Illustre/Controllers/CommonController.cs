@@ -42,15 +42,15 @@ public abstract class CommonController : Controller
         {
             case Role.SuperAdmin:
                 {
-                    return RedirectPermanent("/Main/SuperAdmin");
+                    return RedirectPermanent("/Main/SuperAdminMenu");
                 }
             case Role.Editor:
                 {
-                    return RedirectPermanent("/Main/Editor");
+                    return RedirectPermanent("/Main/EditorMenu");
                 }
             case Role.User:
                 {
-                    return RedirectPermanent("/Main/User");
+                    return RedirectPermanent("/Main/UserMenu");
                 }
         }
 

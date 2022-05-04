@@ -8,20 +8,26 @@ public class MainController : CommonController
     public MainController(AccountService accountService) : base(accountService) { }
 
     [HttpGet]
-    public async Task<IActionResult> SuperAdmin()
+    public async Task<IActionResult> SuperAdminMenu()
     {
-        return View();
+        var redirect = await TryRedirect();
+
+        return redirect ?? View();
     }
 
     [HttpGet]
-    public async Task<IActionResult> Editor()
+    public async Task<IActionResult> EditorMenu()
     {
-        return View();
+        var redirect = await TryRedirect();
+
+        return redirect ?? View();
     }
 
     [HttpGet]
-    public async Task<IActionResult> User()
+    public async Task<IActionResult> UserMenu()
     {
-        return View();
+        var redirect = await TryRedirect();
+
+        return redirect ?? View();
     }
 }
