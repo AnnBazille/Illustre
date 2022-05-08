@@ -44,6 +44,29 @@
                 </div>
             </div>
         </nav>
+        @{
+            if (HttpContextAccessor is not null &&
+                HttpContextAccessor.HttpContext is not null &&
+               !HttpContextAccessor.HttpContext.Request.Cookies.TryGetValue("accept-cookie", out var acceptCookie))
+            {
+                <div class="container illustre-form">
+                    <div class="row g-1">
+                        <div class="col-12">
+                            <div class="alert alert-light alert-dismissible fade show" role="alert">
+                                <span>This site uses cookies. By continuing to browse you are agreeing to our use of cookies.</span>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                var options = new CookieOptions()
+                {
+                    Expires = DateTime.UtcNow.AddDays(1),
+                    Domain = HttpContextAccessor.HttpContext.Request.Host.Host,
+                };
+                HttpContextAccessor.HttpContext.Response.Cookies.Append("accept-cookie", "accept", options);
+            }
+        }
     </header>
     <div class="container">
         <main role="main" class="pb-3">
