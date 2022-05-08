@@ -1,0 +1,12 @@
+﻿@{
+    ViewData["Title"] = "Manage Editors";
+}
+
+@model IEnumerable<ManageAccountModel>
+
+@{
+    foreach (var item in Model)
+    {
+        @await Html.PartialAsync("~/Views/Account/Partial/_UpdateAccountById.cshtml", item)
+    }
+}

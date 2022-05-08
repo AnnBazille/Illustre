@@ -145,6 +145,31 @@ public class AccountController : CommonController
         return RedirectPermanent("/Account/Index");
     }
 
+    [HttpGet]
+    public async Task<IActionResult> ManageEditors()
+    {
+        if (Request.Cookies.TryGetValue(SessionCookie, out var cookie))
+        {
+            var role = await _accountService.TryGetRoleBySessionGuid(cookie);
+
+            if (role is not null &&
+                role == Role.SuperAdmin)
+            {
+                var editors = await _accountService.GetEditors();
+                (editors as List<ManageAccountModel>).Add(new ManageAccountModel()
+                {
+                    Id = 2,
+                    Email = "t@e.com",
+                    Username = "llslk",
+                    IsActive = true,
+                });
+                return View(editors);
+            }
+        }
+
+        return RedirectPermanent("/Account/Index");
+    }
+
     public IActionResult Privacy()
     {
         return View();

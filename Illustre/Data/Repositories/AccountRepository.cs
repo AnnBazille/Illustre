@@ -138,6 +138,21 @@ public class AccountRepository
         };
     }
 
+    public async Task<IEnumerable<ManageAccountModel>> GetEditors()
+    {
+        return await _databaseContext.Accounts
+            .AsNoTracking()
+            .Where(x => x.Role == Role.Editor)
+            .Select(x => new ManageAccountModel()
+            {
+                Id = x.Id,
+                IsActive = x.IsActive,
+                Email = x.Email,
+                Username = x.Username,
+            })
+            .ToListAsync();
+    }
+
     private async Task<SignInResponse> GetSignInResponse(Account account)
     {
         var sessionGuid = SetSessionGuid(account);

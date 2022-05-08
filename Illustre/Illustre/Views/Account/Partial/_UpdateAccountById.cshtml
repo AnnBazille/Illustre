@@ -1,0 +1,15 @@
+﻿@model ManageAccountModel
+
+<form method="post" action="/Account/UpdateAccountById">
+    <input type="hidden" asp-for="Id">
+    <div class="input-group mb-3">
+        <input type="email" class="form-control" asp-for="Email" placeholder="email" value="@Model.Email">
+        <input type="text" class="form-control" asp-for="Username" placeholder="username" value="@Model.Username">
+        <input type="password" class="form-control" asp-for="Password" placeholder="password">
+        <div class="input-group-text">
+            <input type="checkbox" class="form-check-input mt-0" asp-for="IsActive" id="is-active-@Model.Id" value="@Model.IsActive">
+            <label class="form-check-label illustre-checkbox-label" for="is-active-@Model.Id">Is Active</label>
+        </div>
+        <button type="submit" class="btn btn-outline-dark">Save</button>
+    </div>
+</form>

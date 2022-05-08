@@ -38,4 +38,9 @@ public class AccountService
     {
         return await _accountRepository.TryUpdateAccount(sessionGuid, request);
     }
+
+    public async Task<IEnumerable<ManageAccountModel>> GetEditors()
+    {
+        return await _accountRepository.GetEditors();
+    }
 }
