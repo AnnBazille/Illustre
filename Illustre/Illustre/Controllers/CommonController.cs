@@ -82,4 +82,11 @@ public abstract class CommonController : Controller
             response.Role.ToString(),
             options);
     }
+
+    public void RemoveCookies()
+    {
+        Response.Cookies.Delete(SessionCookie);
+        Response.Cookies.Delete(UsernameCookie);
+        Response.Cookies.Delete(RoleCookie);
+    }
 }

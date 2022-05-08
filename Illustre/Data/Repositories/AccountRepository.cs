@@ -19,13 +19,13 @@ public class AccountRepository
 
     public async Task<Role?> TryGetRoleBySessionGuid(string sessionGuid)
     {
-        var expirationTime = DateTime.UtcNow.AddDays(TokenDaysLife);
+        var startTime = DateTime.UtcNow.AddDays(-TokenDaysLife);
         return (await _databaseContext.Accounts
             .AsNoTracking()
             .FirstOrDefaultAsync(x => x.SessionGuid != null &&
                                       x.SessionGuid == sessionGuid &&
                                      (x.LastLogin == null ||
-                                      x.LastLogin!.Value < expirationTime)))
+                                      x.LastLogin!.Value > startTime)))
             ?.Role;
     }
 

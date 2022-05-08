@@ -83,6 +83,19 @@ public class AccountController : CommonController
         return RedirectPermanent("/Account/SignUp?isFirstAttempt=false");
     }
 
+    [HttpGet]
+    public async Task<IActionResult> LogOut()
+    {
+        var redirect = await TryRedirect();
+
+        if (redirect != null)
+        {
+            RemoveCookies();
+        }
+
+        return RedirectPermanent("/Account/Index");
+    }
+
     public IActionResult Privacy()
     {
         return View();
