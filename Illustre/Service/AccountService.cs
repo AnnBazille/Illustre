@@ -28,4 +28,14 @@ public class AccountService
     {
         return await _accountRepository.TrySignUp(request);
     }
+
+    public async Task<SignUpRequest?> TryGetAccount(string sessionGuid)
+    {
+        return await _accountRepository.TryGetAccount(sessionGuid);
+    }
+
+    public async Task<SignUpRequest?> TryUpdateAccount(string sessionGuid, UpdateAccountRequest request)
+    {
+        return await _accountRepository.TryUpdateAccount(sessionGuid, request);
+    }
 }

@@ -79,6 +79,65 @@ public class AccountRepository
         }
     }
 
+    public async Task<SignUpRequest?> TryGetAccount(string sessionGuid)
+    {
+        return await _databaseContext.Accounts
+            .AsNoTracking()
+            .Where(x => x.SessionGuid != null &&
+                        x.SessionGuid == sessionGuid)
+            .Select(x => new SignUpRequest()
+            {
+                Email = x.Email,
+                Username = x.Username,
+            })
+            .FirstOrDefaultAsync();
+    }
+
+    public async Task<SignUpRequest?> TryUpdateAccount(string sessionGuid, UpdateAccountRequest request)
+    {
+        var account = await _databaseContext.Accounts
+            .Where(x => x.SessionGuid != null &&
+                        x.SessionGuid == sessionGuid)
+            .FirstOrDefaultAsync();
+
+        if (account == null)
+        {
+            return null;
+        }
+
+        if (request.Email is not null)
+        {
+            account.Email = request.Email;
+        }
+
+        if (request.Username is not null)
+        {
+            account.Username = request.Username;
+        }
+
+        if (request.Password is not null)
+        {
+            var passwordHash = GetPasswordHash(
+                request.Password,
+                Convert.FromHexString(account.Salt));
+        }
+
+        try
+        {
+            await _databaseContext.SaveChangesAsync();
+        }
+        catch
+        {
+            return null;
+        }
+
+        return new SignUpRequest()
+        {
+            Email = account.Email,
+            Username = account.Username,
+        };
+    }
+
     private async Task<SignInResponse> GetSignInResponse(Account account)
     {
         var sessionGuid = SetSessionGuid(account);

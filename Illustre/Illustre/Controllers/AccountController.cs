@@ -96,6 +96,55 @@ public class AccountController : CommonController
         return RedirectPermanent("/Account/Index");
     }
 
+    [HttpGet]
+    public async Task<IActionResult> Account()
+    {
+        var redirect = await TryRedirect();
+
+        if (redirect != null &&
+            Request.Cookies.TryGetValue(SessionCookie, out var cookie))
+        {
+            var account = await _accountService.TryGetAccount(cookie);
+            return View(account);
+        }
+
+        return RedirectPermanent("/Account/Index");
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> UpdateAccount(UpdateAccountRequest request)
+    {
+        var redirect = await TryRedirect();
+
+        if (redirect != null &&
+            Request.Cookies.TryGetValue(SessionCookie, out var cookie))
+        {
+            var result = await _accountService.TryUpdateAccount(cookie, request);
+
+            if (result == null)
+            {
+                return RedirectPermanent("/Account/Account?isFirstAttempt=false");
+            }
+            else
+            {
+                var options = new CookieOptions()
+                {
+                    Expires = DateTime.UtcNow.AddDays(1),
+                    Domain = Request.Host.Host,
+                };
+
+                Response.Cookies.Append(
+                    UsernameCookie,
+                    result.Username,
+                    options);
+
+                return View("Account", result);
+            }
+        }
+
+        return RedirectPermanent("/Account/Index");
+    }
+
     public IActionResult Privacy()
     {
         return View();
