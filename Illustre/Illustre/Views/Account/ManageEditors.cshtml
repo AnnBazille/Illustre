@@ -59,17 +59,6 @@
                 }
                 else
                 {
-                    var leftEnd = 0;
-                    var rightEnd = 1;
-                    var between = 2;
-                    var position = currentPageNumber <= 3 ?
-                                   leftEnd :
-                                   currentPageNumber >= pages - 3 ?
-                                   rightEnd :
-                                   between;
-                    var previousPage = currentPageNumber - 1;
-                    var nextPage = currentPageNumber + 1;
-
                     var isLeftInvervalUsed = false;
                     var isRigthInvervalUsed = false;
                     for (int i = 1; i <= maxPageButtons + 2; i++)
