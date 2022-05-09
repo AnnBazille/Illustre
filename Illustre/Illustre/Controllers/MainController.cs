@@ -14,7 +14,7 @@ public class MainController : CommonController
 
         if (redirect == null)
         {
-            return RedirectPermanent("/Account/Index");
+            return Redirect("/Account/Index");
         }
 
         if ((redirect as RedirectResult)!.Url != "/Main/SuperAdminMenu")
@@ -32,7 +32,7 @@ public class MainController : CommonController
 
         if (redirect == null)
         {
-            return RedirectPermanent("/Account/Index");
+            return Redirect("/Account/Index");
         }
 
         if ((redirect as RedirectResult)!.Url != "/Main/EditorMenu")
@@ -50,7 +50,7 @@ public class MainController : CommonController
 
         if (redirect == null)
         {
-            return RedirectPermanent("/Account/Index");
+            return Redirect("/Account/Index");
         }
 
         if ((redirect as RedirectResult)!.Url != "/Main/UserMenu")

@@ -1,4 +1,5 @@
 ﻿@model SignInRequest
+
 @{
     ViewData["Title"] = "Index";
 }
@@ -22,10 +23,10 @@
                 <input type="password" class="form-control" id="password" placeholder="password" asp-for="Password"/>
             </div>
             <div class="col-6 d-grid">
-                <a role="button" class="btn btn-outline-dark" asp-action="SignUp">Sign Up</a>
+                <a role="button" class="btn btn-dark" asp-action="SignUp">Sign Up</a>
             </div>
             <div class="col-6 d-grid">
-                <button type="submit" class="btn btn-outline-dark">Sign In</button>
+                <button type="submit" class="btn btn-dark">Sign In</button>
             </div>
         </div>
     </div>

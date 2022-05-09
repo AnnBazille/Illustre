@@ -1,4 +1,6 @@
-﻿namespace Data.Contracts.Accounts;
+﻿using Data.Entities;
+
+namespace Data.Contracts.Accounts;
 
 public class ManageAccountModel : FailableRequest
 {
@@ -11,4 +13,6 @@ public class ManageAccountModel : FailableRequest
     public string? Password { get; set; }
 
     public string? Username { get; set; }
+
+    public Role Role { get; set; }
 }

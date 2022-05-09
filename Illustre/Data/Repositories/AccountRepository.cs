@@ -53,17 +53,9 @@ public class AccountRepository
 
     public async Task<SignInResponse?> TrySignUp(SignUpRequest request)
     {
-        var salt = GetSalt();
-        var passwordHash = GetPasswordHash(request.Password, salt);
-
-        var account = new Account()
-        {
-            Email = request.Email.ToLower(),
-            Salt = Convert.ToHexString(salt),
-            PasswordHash = passwordHash,
-            Username = request.Username,
-            Role = Role.User,
-        };
+        var account = CreateAccount(request.Email,
+                                    request.Password,
+                                    request.Username);
 
         try
         {
@@ -120,6 +112,8 @@ public class AccountRepository
             var passwordHash = GetPasswordHash(
                 request.Password,
                 Convert.FromHexString(account.Salt));
+
+            account.PasswordHash = passwordHash;
         }
 
         try
@@ -138,19 +132,111 @@ public class AccountRepository
         };
     }
 
-    public async Task<IEnumerable<ManageAccountModel>> GetEditors()
+    public async Task<ManageAccountsModel> GetEditors(int skip)
     {
-        return await _databaseContext.Accounts
+        var result = new ManageAccountsModel();
+
+        result.Total = await _databaseContext.Accounts
+            .AsNoTracking()
+            .CountAsync(x => x.Role == Role.Editor);
+        result.Models = await _databaseContext.Accounts
             .AsNoTracking()
             .Where(x => x.Role == Role.Editor)
+            .OrderBy(x => x.Id)
+            .Skip(skip)
+            .Take(10)
             .Select(x => new ManageAccountModel()
             {
                 Id = x.Id,
                 IsActive = x.IsActive,
                 Email = x.Email,
                 Username = x.Username,
+                Role = x.Role,
             })
             .ToListAsync();
+
+        return result;
+    }
+
+    public async Task<bool> TryAddAccount(AddAccountRequest request)
+    {
+        var account = CreateAccount(request.Email,
+                                    request.Password,
+                                    request.Username,
+                                    request.Role);
+
+        try
+        {
+            await _databaseContext.Accounts.AddAsync(account);
+            await _databaseContext.SaveChangesAsync();
+
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    public async Task<bool> TryUpdateAccountById(ManageAccountModel model)
+    {
+        var account = await _databaseContext.Accounts
+            .FirstOrDefaultAsync(x => x.Id == model.Id);
+
+        if (account == null)
+        {
+            return false;
+        }
+
+        account.IsActive = model.IsActive;
+
+        if (model.Email is not null)
+        {
+            account.Email = model.Email;
+        }
+
+        if (model.Username is not null)
+        {
+            account.Username = model.Username;
+        }
+
+        if (model.Password is not null)
+        {
+            var passwordHash = GetPasswordHash(
+                model.Password,
+                Convert.FromHexString(account.Salt));
+
+            account.PasswordHash = passwordHash;
+        }
+
+        try
+        {
+            await _databaseContext.SaveChangesAsync();
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    private Account CreateAccount(
+        string email,
+        string password,
+        string username,
+        Role role = Role.User)
+    {
+        var salt = GetSalt();
+        var passwordHash = GetPasswordHash(password, salt);
+
+        return new Account()
+        {
+            Email = email.ToLower(),
+            Salt = Convert.ToHexString(salt),
+            PasswordHash = passwordHash,
+            Username = username,
+            Role = role,
+        };
     }
 
     private async Task<SignInResponse> GetSignInResponse(Account account)

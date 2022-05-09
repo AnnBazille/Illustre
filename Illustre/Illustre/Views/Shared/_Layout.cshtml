@@ -16,13 +16,14 @@
             <div class="container-fluid">
                 <a class="navbar-brand" asp-area="" asp-controller="Account" asp-action="Index">Illustre</a>
                 <div class="d-flex">
+                    <a class="illustre-grayscale illustre-navbar-text" href="mailto:superadmin@example.com">Contact Support</a>
                     @{
                         if (HttpContextAccessor is not null &&
                             HttpContextAccessor.HttpContext is not null &&
                             HttpContextAccessor.HttpContext.Request.Cookies.TryGetValue("username", out var usernameCookie) &&
                             HttpContextAccessor.HttpContext.Request.Cookies.TryGetValue("role", out var roleCookie))
                         {
-                            <div class="nav-item dropdown">
+                            <div class="nav-item dropdown illustre-grayscale">
                                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     <span>@usernameCookie</span>
                                 </a>
@@ -73,12 +74,6 @@
             @RenderBody()
         </main>
     </div>
-
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2022 - Illustre - <a asp-area="" asp-controller="Account" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>

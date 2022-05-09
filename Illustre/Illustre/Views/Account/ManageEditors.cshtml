@@ -1,12 +1,119 @@
-﻿@{
+﻿@model ManageEditorsRequest
+
+@{
     ViewData["Title"] = "Manage Editors";
 }
 
-@model IEnumerable<ManageAccountModel>
-
-@{
-    foreach (var item in Model)
-    {
-        @await Html.PartialAsync("~/Views/Account/Partial/_UpdateAccountById.cshtml", item)
+<div class="illustre-form illustre-grayscale">
+    @{
+        if (!Model.IsFirstAttempt)
+        {
+            <div class="col-12 alert alert-light alert-dismissible fade show" role="alert">
+                <span>An error occured while editing or creating an account.</span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+        
+        @await Html.PartialAsync("~/Views/Account/Partial/_AddAccount.cshtml",
+                                new AddAccountRequest()
+                                {
+                                    Role = Role.Editor,
+                                });
+        
+        if (Model.AccountsData is not null)
+        {
+            foreach (var accountItem in Model.AccountsData.Models)
+            {
+                @await Html.PartialAsync("~/Views/Account/Partial/_UpdateAccountById.cshtml", accountItem)
+                ;
+            }
+        }
     }
-}
+</div>
+<nav class="illustre-pagination illustre-grayscale">
+    <ul class="pagination">
+        @{
+            if (Model.AccountsData is not null)
+            {
+                var pageSize = 10;
+                var pages = Model.AccountsData.Total / pageSize;
+                if (Model.AccountsData.Total % pageSize != 0)
+                {
+                    pages++;
+                }
+                var currentPageNumber = Model.Skip / pageSize + 1;
+                var maxPageButtons = 9;
+
+                if (pages <= maxPageButtons)
+                {
+                    for (int i = 1; i <= pages; i++)
+                    {
+                        var active = i == currentPageNumber ?
+                                     "active" :
+                                     string.Empty;
+                        var skip = (i - 1) * 10;
+                        <li class="page-item @active">
+                            <a class="page-link" asp-controller="Account" asp-action="ManageEditors" asp-route-skip="@skip">@i</a>
+                        </li>
+                    }
+                }
+                else
+                {
+                    var leftEnd = 0;
+                    var rightEnd = 1;
+                    var between = 2;
+                    var position = currentPageNumber <= 3 ?
+                                   leftEnd :
+                                   currentPageNumber >= pages - 3 ?
+                                   rightEnd :
+                                   between;
+                    var previousPage = currentPageNumber - 1;
+                    var nextPage = currentPageNumber + 1;
+
+                    var isLeftInvervalUsed = false;
+                    var isRigthInvervalUsed = false;
+                    for (int i = 1; i <= maxPageButtons + 2; i++)
+                    {
+                        var active = i == currentPageNumber ?
+                                     "active" :
+                                     string.Empty;
+                        var skip = (i - 1) * 10;
+                        if ((i >= 1 && i <= 3) ||
+                            (i >= pages - 3 && i <= pages))
+                        {
+                            <li class="page-item @active">
+                                <a class="page-link" asp-controller="Account" asp-action="ManageEditors" asp-route-skip="@skip">@i</a>
+                            </li>
+                        }
+                        else if (i == currentPageNumber ||
+                                 i == currentPageNumber - 1 ||
+                                 i == currentPageNumber + 1)
+                        {
+                            <li class="page-item @active">
+                                <a class="page-link" asp-controller="Account" asp-action="ManageEditors" asp-route-skip="@skip">@i</a>
+                            </li>
+                        }
+                        else if (i > 4 &&
+                                 i < currentPageNumber - 1 &&
+                                 !isLeftInvervalUsed)
+                        {
+                            isLeftInvervalUsed = true;
+                            <li class="page-item">
+                                <a class="page-link disabled">...</a>
+                            </li>
+                        }
+                        else if (i < pages - 3 &&
+                                 i > currentPageNumber + 1 &&
+                                 !isRigthInvervalUsed)
+                        {
+                            isRigthInvervalUsed = true;
+                            <li class="page-item">
+                                <a class="page-link disabled">...</a>
+                            </li>
+                        }
+                    }
+                }
+            }
+        }
+    </ul>
+</nav>

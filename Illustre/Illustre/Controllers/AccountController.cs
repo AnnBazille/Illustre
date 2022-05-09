@@ -44,7 +44,7 @@ public class AccountController : CommonController
             }
         }
 
-        return RedirectPermanent("/Account/Index?isFirstAttempt=false");
+        return Redirect("/Account/Index?isFirstAttempt=false");
     }
 
     [HttpGet]
@@ -80,7 +80,7 @@ public class AccountController : CommonController
             }
         }
 
-        return RedirectPermanent("/Account/SignUp?isFirstAttempt=false");
+        return Redirect("/Account/SignUp?isFirstAttempt=false");
     }
 
     [HttpGet]
@@ -93,37 +93,31 @@ public class AccountController : CommonController
             RemoveCookies();
         }
 
-        return RedirectPermanent("/Account/Index");
+        return Redirect("/Account/Index");
     }
 
     [HttpGet]
     public async Task<IActionResult> Account()
     {
-        var redirect = await TryRedirect();
-
-        if (redirect != null &&
-            Request.Cookies.TryGetValue(SessionCookie, out var cookie))
+        if (Request.Cookies.TryGetValue(SessionCookie, out var cookie))
         {
             var account = await _accountService.TryGetAccount(cookie);
             return View(account);
         }
 
-        return RedirectPermanent("/Account/Index");
+        return Redirect("/Account/Index");
     }
 
     [HttpPost]
     public async Task<IActionResult> UpdateAccount(UpdateAccountRequest request)
     {
-        var redirect = await TryRedirect();
-
-        if (redirect != null &&
-            Request.Cookies.TryGetValue(SessionCookie, out var cookie))
+        if (Request.Cookies.TryGetValue(SessionCookie, out var cookie))
         {
             var result = await _accountService.TryUpdateAccount(cookie, request);
 
             if (result == null)
             {
-                return RedirectPermanent("/Account/Account?isFirstAttempt=false");
+                return Redirect("/Account/Account?isFirstAttempt=false");
             }
             else
             {
@@ -142,11 +136,11 @@ public class AccountController : CommonController
             }
         }
 
-        return RedirectPermanent("/Account/Index");
+        return Redirect("/Account/Index");
     }
 
     [HttpGet]
-    public async Task<IActionResult> ManageEditors()
+    public async Task<IActionResult> ManageEditors(ManageEditorsRequest request)
     {
         if (Request.Cookies.TryGetValue(SessionCookie, out var cookie))
         {
@@ -155,24 +149,58 @@ public class AccountController : CommonController
             if (role is not null &&
                 role == Role.SuperAdmin)
             {
-                var editors = await _accountService.GetEditors();
-                (editors as List<ManageAccountModel>).Add(new ManageAccountModel()
-                {
-                    Id = 2,
-                    Email = "t@e.com",
-                    Username = "llslk",
-                    IsActive = true,
-                });
-                return View(editors);
+                request.AccountsData = await _accountService.GetEditors(request.Skip);
+                return View(request);
             }
         }
 
-        return RedirectPermanent("/Account/Index");
+        return Redirect("/Account/Index");
     }
 
-    public IActionResult Privacy()
+    [HttpPost]
+    public async Task<IActionResult> AddAccount(AddAccountRequest request)
     {
-        return View();
+        if (Request.Cookies.TryGetValue(SessionCookie, out var cookie))
+        {
+            var role = await _accountService.TryGetRoleBySessionGuid(cookie);
+
+            if (role is not null &&
+                role == Role.SuperAdmin)
+            {
+                var result = (await _accountService.TryAddAccount(request))
+                    .ToString()
+                    .ToLower();
+                var action = request.Role == Role.Editor ?
+                             "ManageEditors" :
+                             "ManageUsers";
+                return Redirect($"/Account/{action}?isFirstAttempt={result}");
+            }
+        }
+
+        return Redirect("/Account/Index");
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> UpdateAccountById(ManageAccountModel model)
+    {
+        if (Request.Cookies.TryGetValue(SessionCookie, out var cookie))
+        {
+            var role = await _accountService.TryGetRoleBySessionGuid(cookie);
+
+            if (role is not null &&
+                role == Role.SuperAdmin)
+            {
+                var result = (await _accountService.TryUpdateAccountById(model))
+                    .ToString()
+                    .ToLower();
+                var action = model.Role == Role.Editor ?
+                             "ManageEditors" :
+                             "ManageUsers";
+                return Redirect($"/Account/{action}?isFirstAttempt={result}");
+            }
+        }
+
+        return Redirect("/Account/Index");
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

@@ -1,0 +1,11 @@
+﻿@model AddAccountRequest
+
+<form method="post" action="/Account/AddAccount">
+    <div class="input-group mb-3">
+        <input type="hidden" asp-for="Role" value="@Model.Role">
+        <input type="email" class="form-control" asp-for="Email" placeholder="email" value="@Model.Email">
+        <input type="text" class="form-control" asp-for="Username" placeholder="username" value="@Model.Username">
+        <input type="password" class="form-control" asp-for="Password" placeholder="password">
+        <button type="submit" class="btn btn-outline-dark">Add Editor</button>
+    </div>
+</form>

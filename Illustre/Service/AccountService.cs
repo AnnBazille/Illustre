@@ -1,5 +1,4 @@
-﻿using Data;
-using Data.Contracts.Accounts;
+﻿using Data.Contracts.Accounts;
 using Data.Entities;
 using Data.Repositories;
 
@@ -39,8 +38,18 @@ public class AccountService
         return await _accountRepository.TryUpdateAccount(sessionGuid, request);
     }
 
-    public async Task<IEnumerable<ManageAccountModel>> GetEditors()
+    public async Task<ManageAccountsModel> GetEditors(int skip)
     {
-        return await _accountRepository.GetEditors();
+        return await _accountRepository.GetEditors(skip);
+    }
+
+    public async Task<bool> TryAddAccount(AddAccountRequest request)
+    {
+        return await _accountRepository.TryAddAccount(request);
+    }
+
+    public async Task<bool> TryUpdateAccountById(ManageAccountModel model)
+    {
+        return await _accountRepository.TryUpdateAccountById(model);
     }
 }
