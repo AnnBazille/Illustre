@@ -168,6 +168,7 @@ public class AccountRepository
         try
         {
             await _databaseContext.Accounts.AddAsync(account);
+            await GetSignInResponse(account);
             await _databaseContext.SaveChangesAsync();
 
             return true;

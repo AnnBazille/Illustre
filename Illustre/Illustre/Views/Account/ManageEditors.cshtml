@@ -12,6 +12,7 @@
                 <span>An error occured while editing or creating an account.</span>
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
+            Model.IsFirstAttempt = true;
         }
         
         @await Html.PartialAsync("~/Views/Account/Partial/_AddAccount.cshtml",
@@ -24,8 +25,7 @@
         {
             foreach (var accountItem in Model.AccountsData.Models)
             {
-                @await Html.PartialAsync("~/Views/Account/Partial/_UpdateAccountById.cshtml", accountItem)
-                ;
+                @await Html.PartialAsync("~/Views/Account/Partial/_UpdateAccountById.cshtml", accountItem);
             }
         }
     }
