@@ -140,7 +140,7 @@ public class AccountController : CommonController
     }
 
     [HttpGet]
-    public async Task<IActionResult> ManageEditors(ManageEditorsRequest request)
+    public async Task<IActionResult> ManageEditors(ManageAccountsRequest request)
     {
         if (Request.Cookies.TryGetValue(SessionCookie, out var cookie))
         {
@@ -159,7 +159,7 @@ public class AccountController : CommonController
     }
 
     [HttpGet]
-    public async Task<IActionResult> ManageUsers(ManageEditorsRequest request)
+    public async Task<IActionResult> ManageUsers(ManageAccountsRequest request)
     {
         if (Request.Cookies.TryGetValue(SessionCookie, out var cookie))
         {

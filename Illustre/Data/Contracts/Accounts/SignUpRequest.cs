@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Data.Contracts.Common;
+using System.ComponentModel.DataAnnotations;
 
 namespace Data.Contracts.Accounts;
 

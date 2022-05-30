@@ -16,8 +16,10 @@ builder.Services.AddDbContext<DatabaseContext>(options =>
         o => o.EnableRetryOnFailure()));
 
 builder.Services.AddScoped<AccountRepository>();
+builder.Services.AddScoped<MediaRepository>();
 
 builder.Services.AddScoped<AccountService>();
+builder.Services.AddScoped<MediaService>();
 
 var app = builder.Build();
 

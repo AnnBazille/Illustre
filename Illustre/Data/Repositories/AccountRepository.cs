@@ -7,21 +7,17 @@ using System.Security.Cryptography;
 
 namespace Data.Repositories;
 
-public class AccountRepository
+public class AccountRepository : BaseRepository
 {
     private const int TokenDaysLife = 1;
     private const int SaltSize = 16;
-    private readonly DatabaseContext _databaseContext;
 
-    public AccountRepository(DatabaseContext databaseContext)
-    {
-        _databaseContext = databaseContext;
-    }
+    public AccountRepository(DatabaseContext databaseContext) : base(databaseContext) { }
 
     public async Task<Role?> TryGetRoleBySessionGuid(string sessionGuid)
     {
         var startTime = DateTime.UtcNow.AddDays(-TokenDaysLife);
-        return (await _databaseContext.Accounts
+        return (await DatabaseContext.Accounts
             .AsNoTracking()
             .FirstOrDefaultAsync(x => x.SessionGuid != null &&
                                       x.SessionGuid == sessionGuid &&
@@ -33,7 +29,7 @@ public class AccountRepository
     public async Task<SignInResponse?> TrySignIn(SignInRequest request)
     {
         var email = request.Email.ToLower();
-        var account = await _databaseContext.Accounts
+        var account = await DatabaseContext.Accounts
         .FirstOrDefaultAsync(x => x.Email == email &&
                                   x.IsActive);
 
@@ -60,9 +56,9 @@ public class AccountRepository
 
         try
         {
-            await _databaseContext.Accounts.AddAsync(account);
+            await DatabaseContext.Accounts.AddAsync(account);
             var result = await GetSignInResponse(account);
-            await _databaseContext.SaveChangesAsync();
+            await DatabaseContext.SaveChangesAsync();
 
             return result;
         }
@@ -74,7 +70,7 @@ public class AccountRepository
 
     public async Task<SignUpRequest?> TryGetAccount(string sessionGuid)
     {
-        return await _databaseContext.Accounts
+        return await DatabaseContext.Accounts
             .AsNoTracking()
             .Where(x => x.SessionGuid != null &&
                         x.SessionGuid == sessionGuid)
@@ -88,7 +84,7 @@ public class AccountRepository
 
     public async Task<SignUpRequest?> TryUpdateAccount(string sessionGuid, UpdateAccountRequest request)
     {
-        var account = await _databaseContext.Accounts
+        var account = await DatabaseContext.Accounts
             .Where(x => x.SessionGuid != null &&
                         x.SessionGuid == sessionGuid)
             .FirstOrDefaultAsync();
@@ -119,7 +115,7 @@ public class AccountRepository
 
         try
         {
-            await _databaseContext.SaveChangesAsync();
+            await DatabaseContext.SaveChangesAsync();
         }
         catch
         {
@@ -142,10 +138,10 @@ public class AccountRepository
                                                          x.Email.Contains(search) ||
                                                          x.Username.Contains(search));
 
-        result.Total = await _databaseContext.Accounts
+        result.Total = await DatabaseContext.Accounts
             .AsNoTracking()
             .CountAsync(predicate);
-        result.Models = await _databaseContext.Accounts
+        result.Models = await DatabaseContext.Accounts
             .AsNoTracking()
             .Where(predicate)
             .OrderBy(x => x.Id)
@@ -173,9 +169,9 @@ public class AccountRepository
 
         try
         {
-            await _databaseContext.Accounts.AddAsync(account);
+            await DatabaseContext.Accounts.AddAsync(account);
             await GetSignInResponse(account);
-            await _databaseContext.SaveChangesAsync();
+            await DatabaseContext.SaveChangesAsync();
 
             return true;
         }
@@ -187,7 +183,7 @@ public class AccountRepository
 
     public async Task<bool> TryUpdateAccountById(ManageAccountModel model)
     {
-        var account = await _databaseContext.Accounts
+        var account = await DatabaseContext.Accounts
             .FirstOrDefaultAsync(x => x.Id == model.Id);
 
         if (account == null)
@@ -218,7 +214,7 @@ public class AccountRepository
 
         try
         {
-            await _databaseContext.SaveChangesAsync();
+            await DatabaseContext.SaveChangesAsync();
             return true;
         }
         catch
@@ -251,7 +247,7 @@ public class AccountRepository
         var sessionGuid = SetSessionGuid(account);
         account.LastLogin = DateTime.UtcNow;
 
-        await _databaseContext.SaveChangesAsync();
+        await DatabaseContext.SaveChangesAsync();
         return new SignInResponse()
         {
             Username = account.Username,

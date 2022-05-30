@@ -1,4 +1,4 @@
-﻿namespace Data.Contracts.Accounts;
+﻿namespace Data.Contracts.Common;
 
 public abstract class FailableRequest
 {

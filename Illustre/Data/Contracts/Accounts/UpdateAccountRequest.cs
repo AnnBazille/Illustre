@@ -1,4 +1,6 @@
-﻿namespace Data.Contracts.Accounts;
+﻿using Data.Contracts.Common;
+
+namespace Data.Contracts.Accounts;
 
 public class UpdateAccountRequest : FailableRequest
 {

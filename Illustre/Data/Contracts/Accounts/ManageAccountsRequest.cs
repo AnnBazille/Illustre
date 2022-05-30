@@ -1,6 +1,8 @@
-﻿namespace Data.Contracts.Accounts;
+﻿using Data.Contracts.Common;
 
-public class ManageEditorsRequest : FailableRequest, ISearchable
+namespace Data.Contracts.Accounts;
+
+public class ManageAccountsRequest : FailableRequest, ISearchable
 {
     public int Skip { get; set; } = 0;
 

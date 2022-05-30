@@ -1,7 +1,7 @@
-﻿@model ManageAccountsRequest
+﻿@model ManageTagsRequest
 
 @{
-    ViewData["Title"] = "Manage Users";
+    ViewData["Title"] = "Manage Tags";
 }
 
 <div class="illustre-form illustre-grayscale">
@@ -9,30 +9,26 @@
         if (!Model.IsFirstAttempt)
         {
             <div class="col-12 alert alert-light alert-dismissible fade show" role="alert">
-                <span>An error occured while editing or creating an account.</span>
+                <span>An error occured while editing or creating a tag.</span>
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
             Model.IsFirstAttempt = true;
         }
 
-        <form method="get" action="/Account/ManageUsers">
+        <form method="get" action="/Media/ManageTags">
             <div class="input-group mb-3">
                 <input type="text" class="form-control" asp-for="SearchPattern" placeholder="search" value="@Model.SearchPattern">
                 <button type="submit" class="btn btn-outline-dark">Search</button>
             </div>
         </form>
         
-        @await Html.PartialAsync("~/Views/Account/Partial/_AddAccount.cshtml",
-                                new AddAccountRequest()
-                                {
-                                    Role = Role.User,
-                                });
+        @await Html.PartialAsync("~/Views/Media/Partial/_AddTag.cshtml", new AddTagRequest());
         
-        if (Model.AccountsData is not null)
+        if (Model.TagsData is not null)
         {
-            foreach (var accountItem in Model.AccountsData.Models)
+            foreach (var tagItem in Model.TagsData.Models)
             {
-                @await Html.PartialAsync("~/Views/Account/Partial/_UpdateAccountById.cshtml", accountItem);
+                @await Html.PartialAsync("~/Views/Media/Partial/_UpdateTagById.cshtml", tagItem);
             }
         }
     }
@@ -40,11 +36,11 @@
 <nav class="illustre-pagination illustre-grayscale">
     <ul class="pagination">
         @{
-            if (Model.AccountsData is not null)
+            if (Model.TagsData is not null)
             {
                 var pageSize = 10;
-                var pages = Model.AccountsData.Total / pageSize;
-                if (Model.AccountsData.Total % pageSize != 0)
+                var pages = Model.TagsData.Total / pageSize;
+                if (Model.TagsData.Total % pageSize != 0)
                 {
                     pages++;
                 }
@@ -60,7 +56,7 @@
                                      string.Empty;
                         var skip = (i - 1) * 10;
                         <li class="page-item @active">
-                            <a class="page-link" asp-controller="Account" asp-action="ManageUsers" asp-route-skip="@skip">@i</a>
+                            <a class="page-link" asp-controller="Media" asp-action="ManageTags" asp-route-skip="@skip">@i</a>
                         </li>
                     }
                 }
@@ -78,7 +74,7 @@
                             (i >= pages - 3 && i <= pages))
                         {
                             <li class="page-item @active">
-                                <a class="page-link" asp-controller="Account" asp-action="ManageUsers" asp-route-skip="@skip">@i</a>
+                                <a class="page-link" asp-controller="Media" asp-action="ManageTags" asp-route-skip="@skip">@i</a>
                             </li>
                         }
                         else if (i == currentPageNumber ||
@@ -86,7 +82,7 @@
                                  i == currentPageNumber + 1)
                         {
                             <li class="page-item @active">
-                                <a class="page-link" asp-controller="Account" asp-action="ManageUsers" asp-route-skip="@skip">@i</a>
+                                <a class="page-link" asp-controller="Media" asp-action="ManageTags" asp-route-skip="@skip">@i</a>
                             </li>
                         }
                         else if (i > 4 &&

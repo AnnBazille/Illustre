@@ -1,4 +1,5 @@
-﻿using Data.Entities;
+﻿using Data.Contracts.Common;
+using Data.Entities;
 
 namespace Data.Contracts.Accounts;
 
