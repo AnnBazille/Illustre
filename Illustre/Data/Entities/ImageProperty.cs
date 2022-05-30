@@ -1,4 +1,6 @@
-﻿namespace Data.Entities;
+﻿using Data.Entities.Common;
+
+namespace Data.Entities;
 
 public class ImageProperty : BaseEntity
 {
