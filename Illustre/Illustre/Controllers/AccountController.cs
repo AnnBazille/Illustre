@@ -158,6 +158,25 @@ public class AccountController : CommonController
         return Redirect("/Account/Index");
     }
 
+    [HttpGet]
+    public async Task<IActionResult> ManageUsers(ManageEditorsRequest request)
+    {
+        if (Request.Cookies.TryGetValue(SessionCookie, out var cookie))
+        {
+            var role = await _accountService.TryGetRoleBySessionGuid(cookie);
+
+            if (role is not null &&
+                role == Role.SuperAdmin)
+            {
+                request.AccountsData = await _accountService
+                    .GetUsers(request.Skip, request.SearchPattern);
+                return View(request);
+            }
+        }
+
+        return Redirect("/Account/Index");
+    }
+
     [HttpPost]
     public async Task<IActionResult> AddAccount(AddAccountRequest request)
     {

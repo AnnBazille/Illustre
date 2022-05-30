@@ -133,11 +133,11 @@ public class AccountRepository
         };
     }
 
-    public async Task<ManageAccountsModel> GetEditors(int skip, string? search)
+    public async Task<ManageAccountsModel> GetAccounts(int skip, string? search, Role role)
     {
         var result = new ManageAccountsModel();
 
-        Expression<Func<Account, bool>> predicate = x => x.Role == Role.Editor &&
+        Expression<Func<Account, bool>> predicate = x => x.Role == role &&
                                                         (string.IsNullOrEmpty(search) ||
                                                          x.Email.Contains(search) ||
                                                          x.Username.Contains(search));

@@ -40,7 +40,12 @@ public class AccountService
 
     public async Task<ManageAccountsModel> GetEditors(int skip, string? search)
     {
-        return await _accountRepository.GetEditors(skip, search);
+        return await _accountRepository.GetAccounts(skip, search, Role.Editor);
+    }
+
+    public async Task<ManageAccountsModel> GetUsers(int skip, string? search)
+    {
+        return await _accountRepository.GetAccounts(skip, search, Role.User);
     }
 
     public async Task<bool> TryAddAccount(AddAccountRequest request)
