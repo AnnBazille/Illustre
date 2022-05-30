@@ -38,9 +38,9 @@ public class AccountService
         return await _accountRepository.TryUpdateAccount(sessionGuid, request);
     }
 
-    public async Task<ManageAccountsModel> GetEditors(int skip)
+    public async Task<ManageAccountsModel> GetEditors(int skip, string? search)
     {
-        return await _accountRepository.GetEditors(skip);
+        return await _accountRepository.GetEditors(skip, search);
     }
 
     public async Task<bool> TryAddAccount(AddAccountRequest request)

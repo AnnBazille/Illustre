@@ -149,7 +149,8 @@ public class AccountController : CommonController
             if (role is not null &&
                 role == Role.SuperAdmin)
             {
-                request.AccountsData = await _accountService.GetEditors(request.Skip);
+                request.AccountsData = await _accountService
+                    .GetEditors(request.Skip, request.SearchPattern);
                 return View(request);
             }
         }

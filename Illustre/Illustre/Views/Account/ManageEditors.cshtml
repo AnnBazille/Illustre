@@ -14,6 +14,13 @@
             </div>
             Model.IsFirstAttempt = true;
         }
+
+        <form method="get" action="/Account/ManageEditors">
+            <div class="input-group mb-3">
+                <input type="text" class="form-control" asp-for="SearchPattern" placeholder="search" value="@Model.SearchPattern">
+                <button type="submit" class="btn btn-outline-dark">Search</button>
+            </div>
+        </form>
         
         @await Html.PartialAsync("~/Views/Account/Partial/_AddAccount.cshtml",
                                 new AddAccountRequest()

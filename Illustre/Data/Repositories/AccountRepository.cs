@@ -2,6 +2,7 @@
 using Data.Entities;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 using System.Security.Cryptography;
 
 namespace Data.Repositories;
@@ -132,16 +133,21 @@ public class AccountRepository
         };
     }
 
-    public async Task<ManageAccountsModel> GetEditors(int skip)
+    public async Task<ManageAccountsModel> GetEditors(int skip, string? search)
     {
         var result = new ManageAccountsModel();
 
+        Expression<Func<Account, bool>> predicate = x => x.Role == Role.Editor &&
+                                                        (string.IsNullOrEmpty(search) ||
+                                                         x.Email.Contains(search) ||
+                                                         x.Username.Contains(search));
+
         result.Total = await _databaseContext.Accounts
             .AsNoTracking()
-            .CountAsync(x => x.Role == Role.Editor);
+            .CountAsync(predicate);
         result.Models = await _databaseContext.Accounts
             .AsNoTracking()
-            .Where(x => x.Role == Role.Editor)
+            .Where(predicate)
             .OrderBy(x => x.Id)
             .Skip(skip)
             .Take(10)
