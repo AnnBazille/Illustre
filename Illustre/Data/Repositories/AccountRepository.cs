@@ -19,8 +19,7 @@ public class AccountRepository : BaseRepository
         var startTime = DateTime.UtcNow.AddDays(-TokenDaysLife);
         return (await DatabaseContext.Accounts
             .AsNoTracking()
-            .FirstOrDefaultAsync(x => x.SessionGuid != null &&
-                                      x.SessionGuid == sessionGuid &&
+            .FirstOrDefaultAsync(x => x.SessionGuid == sessionGuid &&
                                      (x.LastLogin == null ||
                                       x.LastLogin!.Value > startTime)))
             ?.Role;
@@ -146,7 +145,7 @@ public class AccountRepository : BaseRepository
             .Where(predicate)
             .OrderBy(x => x.Id)
             .Skip(skip)
-            .Take(10)
+            .Take(ConstantsHelper.PageSize)
             .Select(x => new ManageAccountModel()
             {
                 Id = x.Id,
@@ -264,13 +263,16 @@ public class AccountRepository : BaseRepository
 
     private string GetPasswordHash(string password, byte[] salt)
     {
+        const int iterationCount = 100000;
+        const int bytes = 256 / 8;
+
         return Convert.ToHexString(
             KeyDerivation.Pbkdf2(
                 password,
                 salt,
                 KeyDerivationPrf.HMACSHA256,
-                100000,
-                256 / 8));
+                iterationCount,
+                bytes));
     }
 
     private string GetGuid()

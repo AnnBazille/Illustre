@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Data.Entities;
+using Microsoft.AspNetCore.Mvc;
 using Service;
 
 namespace Illustre.Controllers;
@@ -10,54 +11,36 @@ public class MainController : CommonController
     [HttpGet]
     public async Task<IActionResult> SuperAdminMenu()
     {
-        var redirect = await TryRedirect();
-
-        if (redirect == null)
-        {
-            return Redirect("/Account/Index");
-        }
-
-        if ((redirect as RedirectResult)!.Url != "/Main/SuperAdminMenu")
-        {
-            return redirect;
-        }
-
-        return View();
+        return await Execute(
+            new Role[] { Role.SuperAdmin },
+            NoParameters,
+            async (NoParameters) =>
+            {
+                return View();
+            });
     }
 
     [HttpGet]
     public async Task<IActionResult> EditorMenu()
     {
-        var redirect = await TryRedirect();
-
-        if (redirect == null)
-        {
-            return Redirect("/Account/Index");
-        }
-
-        if ((redirect as RedirectResult)!.Url != "/Main/EditorMenu")
-        {
-            return redirect;
-        }
-
-        return View();
+        return await Execute(
+            new Role[] { Role.Editor },
+            NoParameters,
+            async (NoParameters) =>
+            {
+                return View();
+            });
     }
 
     [HttpGet]
     public async Task<IActionResult> UserMenu()
     {
-        var redirect = await TryRedirect();
-
-        if (redirect == null)
-        {
-            return Redirect("/Account/Index");
-        }
-
-        if ((redirect as RedirectResult)!.Url != "/Main/UserMenu")
-        {
-            return redirect;
-        }
-
-        return View();
+        return await Execute(
+            new Role[] { Role.User },
+            NoParameters,
+            async (NoParameters) =>
+            {
+                return View();
+            });
     }
 }

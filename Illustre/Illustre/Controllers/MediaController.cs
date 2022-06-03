@@ -19,62 +19,64 @@ public class MediaController : CommonController
     [HttpGet]
     public async Task<IActionResult> ManageTags(ManageTagsRequest request)
     {
-        if (Request.Cookies.TryGetValue(SessionCookie, out var cookie))
-        {
-            var role = await _accountService.TryGetRoleBySessionGuid(cookie);
-
-            if (role is not null &&
-               (role == Role.SuperAdmin ||
-                role == Role.Editor))
+        return await Execute(
+            new Role[] { Role.SuperAdmin, Role.Editor },
+            request,
+            async (request) =>
             {
-                request.TagsData = await _mediaService
-                    .GetTags(request.Skip, request.SearchPattern);
-                return View(request);
-            }
-        }
-
-        return Redirect("/Account/Index");
+                var dto = request as ManageTagsRequest;
+                dto!.TagsData = await _mediaService
+                    .GetTags(dto.Skip, dto.SearchPattern);
+                return View(dto);
+            });
     }
 
     [HttpPost]
     public async Task<IActionResult> AddTag(AddTagRequest request)
     {
-        if (Request.Cookies.TryGetValue(SessionCookie, out var cookie))
-        {
-            var role = await _accountService.TryGetRoleBySessionGuid(cookie);
-
-            if (role is not null &&
-               (role == Role.SuperAdmin ||
-                role == Role.Editor))
+        return await Execute(
+            new Role[] { Role.SuperAdmin, Role.Editor },
+            request,
+            async (request) =>
             {
-                var result = (await _mediaService.TryAddTag(request))
-                    .ToString()
-                    .ToLower();
-                return Redirect($"/Media/ManageTags?isFirstAttempt={result}");
-            }
-        }
+                var dto = request as AddTagRequest;
+                var result = false.ToString().ToLower();
 
-        return Redirect("/Account/Index");
+                if (ModelState.IsValid)
+                {
+                    result = (await _mediaService.TryAddTag(dto!))
+                        .ToString()
+                        .ToLower();
+                }
+                
+                return Redirect(GetManageTagsRedirect(result));
+            });
     }
 
     [HttpPost]
     public async Task<IActionResult> UpdateTagById(ManageTagModel model)
     {
-        if (Request.Cookies.TryGetValue(SessionCookie, out var cookie))
-        {
-            var role = await _accountService.TryGetRoleBySessionGuid(cookie);
-
-            if (role is not null &&
-               (role == Role.SuperAdmin ||
-                role == Role.Editor))
+        return await Execute(
+            new Role[] { Role.SuperAdmin, Role.Editor },
+            model,
+            async (model) =>
             {
-                var result = (await _mediaService.TryUpdateTagById(model))
-                    .ToString()
-                    .ToLower();
-                return Redirect($"/Media/ManageTags?isFirstAttempt={result}");
-            }
-        }
+                var dto = model as ManageTagModel;
+                var result = false.ToString().ToLower();
 
-        return Redirect("/Account/Index");
+                if (ModelState.IsValid)
+                {
+                    result = (await _mediaService.TryUpdateTagById(dto!))
+                        .ToString()
+                        .ToLower();
+                }
+                    
+                return Redirect(GetManageTagsRedirect(result));
+            });
+    }
+
+    private string GetManageTagsRedirect(string isFirstAttempt)
+    {
+        return $"/Media/ManageTags?isFirstAttempt={isFirstAttempt}";
     }
 }

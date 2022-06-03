@@ -32,84 +32,17 @@
         {
             foreach (var accountItem in Model.AccountsData.Models)
             {
-                @await Html.PartialAsync("~/Views/Account/Partial/_UpdateAccountById.cshtml", accountItem);
+                @await Html.PartialAsync("~/Views/Account/Partial/_UpdateAccountById.cshtml", accountItem)
             }
         }
     }
 </div>
-<nav class="illustre-pagination illustre-grayscale">
-    <ul class="pagination">
-        @{
-            if (Model.AccountsData is not null)
-            {
-                var pageSize = 10;
-                var pages = Model.AccountsData.Total / pageSize;
-                if (Model.AccountsData.Total % pageSize != 0)
-                {
-                    pages++;
-                }
-                var currentPageNumber = Model.Skip / pageSize + 1;
-                var maxPageButtons = 9;
 
-                if (pages <= maxPageButtons)
-                {
-                    for (int i = 1; i <= pages; i++)
-                    {
-                        var active = i == currentPageNumber ?
-                                     "active" :
-                                     string.Empty;
-                        var skip = (i - 1) * 10;
-                        <li class="page-item @active">
-                            <a class="page-link" asp-controller="Account" asp-action="ManageEditors" asp-route-skip="@skip">@i</a>
-                        </li>
-                    }
-                }
-                else
-                {
-                    var isLeftInvervalUsed = false;
-                    var isRigthInvervalUsed = false;
-                    for (int i = 1; i <= maxPageButtons + 2; i++)
-                    {
-                        var active = i == currentPageNumber ?
-                                     "active" :
-                                     string.Empty;
-                        var skip = (i - 1) * 10;
-                        if ((i >= 1 && i <= 3) ||
-                            (i >= pages - 3 && i <= pages))
-                        {
-                            <li class="page-item @active">
-                                <a class="page-link" asp-controller="Account" asp-action="ManageEditors" asp-route-skip="@skip">@i</a>
-                            </li>
-                        }
-                        else if (i == currentPageNumber ||
-                                 i == currentPageNumber - 1 ||
-                                 i == currentPageNumber + 1)
-                        {
-                            <li class="page-item @active">
-                                <a class="page-link" asp-controller="Account" asp-action="ManageEditors" asp-route-skip="@skip">@i</a>
-                            </li>
-                        }
-                        else if (i > 4 &&
-                                 i < currentPageNumber - 1 &&
-                                 !isLeftInvervalUsed)
-                        {
-                            isLeftInvervalUsed = true;
-                            <li class="page-item">
-                                <a class="page-link disabled">...</a>
-                            </li>
-                        }
-                        else if (i < pages - 3 &&
-                                 i > currentPageNumber + 1 &&
-                                 !isRigthInvervalUsed)
-                        {
-                            isRigthInvervalUsed = true;
-                            <li class="page-item">
-                                <a class="page-link disabled">...</a>
-                            </li>
-                        }
-                    }
-                }
-            }
-        }
-    </ul>
-</nav>
+@await Html.PartialAsync("~/Views/Shared/_Pagination.cshtml",
+                         new PaginationModel()
+                         {
+                             Total = Model.AccountsData?.Total,
+                             Skip = Model.Skip,
+                             AspController = "Account",
+                             AspAction = "ManageEditors",
+                         })

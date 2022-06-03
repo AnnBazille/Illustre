@@ -24,7 +24,7 @@ public class MediaRepository : BaseRepository
             .Where(predicate)
             .OrderBy(x => x.Id)
             .Skip(skip)
-            .Take(10)
+            .Take(ConstantsHelper.PageSize)
             .Select(x => new ManageTagModel()
             {
                 Id = x.Id,

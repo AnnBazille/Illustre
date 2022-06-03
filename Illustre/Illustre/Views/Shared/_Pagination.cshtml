@@ -1,0 +1,154 @@
+﻿@model PaginationModel
+
+@functions{
+    public int GetPagesCount()
+    {
+        var pages = Model!.Total!.Value / ConstantsHelper.PageSize;
+
+        if (Model.Total % ConstantsHelper.PageSize != 0)
+        {
+            pages++;
+        }
+
+        return pages;
+    }
+
+    public int GetCurrentPageNumber()
+    {
+        return Model!.Skip / ConstantsHelper.PageSize + 1;
+    }
+
+    public string GetActiveAttribute(int pageNumber, int currentPageNumber)
+    {
+        return pageNumber == currentPageNumber ?
+               "active" :
+               string.Empty;
+    }
+
+    public int GetSkipValue(int pageNumber)
+    {
+        return (pageNumber - 1) * 10;
+    }
+
+    public async Task RenderAllButtons(int pages, int currentPageNumber)
+    {
+        for (int i = 1; i <= pages; i++)
+        {
+            var active = GetActiveAttribute(i, currentPageNumber);
+            var skip = GetSkipValue(i);
+            await RenderButton(active, skip, i);
+        }
+    }
+
+    public async Task RenderButton(string active, int skip, int number)
+    {
+        <li class="page-item @active">
+            <a class="page-link" asp-controller="@Model.AspController" asp-action="@Model.AspAction" asp-route-skip="@skip">@number</a>
+        </li>
+    }
+
+    public void RenderThreeDotsButton()
+    {
+        <li class="page-item">
+            <a class="page-link disabled">...</a>
+        </li>
+    }
+
+    public bool IsInLeftEnd(int pageNumber)
+    {
+        const int offset = 2;
+        const int firstPageNumber = 1;
+        const int lastPageNumber = firstPageNumber + offset;
+
+        return pageNumber >= firstPageNumber &&
+               pageNumber <= lastPageNumber;
+    }
+
+    public bool IsInRightEnd(int pageNumber, int lastPageNumber)
+    {
+        const int offset = 2;
+        var firstPageNumber = lastPageNumber - offset;
+
+        return pageNumber >= firstPageNumber &&
+               pageNumber <= lastPageNumber;
+    }
+
+    public bool IsAroundCurrentPage(int currentPageNumber, int pageNumber)
+    {
+        const int offset = 1;
+        return pageNumber == currentPageNumber ||
+               pageNumber == currentPageNumber - offset ||
+               pageNumber == currentPageNumber + offset;
+    }
+
+    public bool IsInLeftInterval(int pageNumber, int currentPageNumber)
+    {
+        const int offset = 1;
+        const int leftEndLastNumber = 3;
+
+        return pageNumber >= leftEndLastNumber + offset &&
+               pageNumber < currentPageNumber - offset;
+    }
+
+    public bool IsInRightInterval(int pageNumber, int pages, int currentPageNumber)
+    {
+        const int offset = 2;
+        const int next = 1;
+
+        return pageNumber < pages - offset &&
+               pageNumber > currentPageNumber + next;
+    }
+
+    public async Task RenderSelectedButtons(int pages, int currentPageNumber)
+    {
+        var isLeftInvervalUsed = false;
+        var isRigthInvervalUsed = false;
+        for (int i = 1; i <= pages; i++)
+        {
+            var active = GetActiveAttribute(i, currentPageNumber);
+            var skip = GetSkipValue(i);
+
+            if (IsInLeftEnd(i) ||
+                IsInRightEnd(i, pages) ||
+                IsAroundCurrentPage(currentPageNumber, i))
+            {
+                await RenderButton(active, skip, i);
+            }
+            else if (IsInLeftInterval(i, currentPageNumber) &&
+                     !isLeftInvervalUsed)
+            {
+                isLeftInvervalUsed = true;
+                RenderThreeDotsButton();
+            }
+            else if (IsInRightInterval(i, pages, currentPageNumber) &&
+                     !isRigthInvervalUsed)
+            {
+                isRigthInvervalUsed = true;
+                RenderThreeDotsButton();
+            }
+        }
+    }
+}
+
+<nav class="illustre-pagination illustre-grayscale">
+    <ul class="pagination">
+        @{
+            if (Model!.Total is not null)
+            {
+                // for pages #1-9 number buttons are shown without any three dots buttons in panel
+                var maxPageButtons = 9;
+                var pages = GetPagesCount();
+                var currentPageNumber = GetCurrentPageNumber();
+
+                if (pages <= maxPageButtons)
+                {
+                    await RenderAllButtons(pages, currentPageNumber);
+                }
+                else
+                {
+                    await RenderSelectedButtons(pages, currentPageNumber);
+                }
+            }
+        }
+    </ul>
+</nav>

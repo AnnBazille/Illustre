@@ -13,6 +13,16 @@ public abstract class CommonController : Controller
 
     public const string RoleCookie = "role";
 
+    public const string SuperAdminMenuRedirect = "/Main/SuperAdminMenu";
+
+    public const string EditorMenuRedirect = "/Main/EditorMenu";
+
+    public const string UserMenuRedirect = "/Main/UserMenu";
+
+    public const string IndexRedirect = "/Account/Index";
+
+    public const string NoParameters = "";
+
     protected readonly AccountService _accountService;
 
     public CommonController(AccountService accountService)
@@ -44,15 +54,15 @@ public abstract class CommonController : Controller
         {
             case Role.SuperAdmin:
                 {
-                    return Redirect("/Main/SuperAdminMenu");
+                    return Redirect(SuperAdminMenuRedirect);
                 }
             case Role.Editor:
                 {
-                    return Redirect("/Main/EditorMenu");
+                    return Redirect(EditorMenuRedirect);
                 }
             case Role.User:
                 {
-                    return Redirect("/Main/UserMenu");
+                    return Redirect(UserMenuRedirect);
                 }
         }
 
@@ -88,5 +98,24 @@ public abstract class CommonController : Controller
         Response.Cookies.Delete(SessionCookie);
         Response.Cookies.Delete(UsernameCookie);
         Response.Cookies.Delete(RoleCookie);
+    }
+
+    public async Task<IActionResult> Execute(
+        Role[] allowedRoles,
+        object dto,
+        Func<object, Task<IActionResult>> action)
+    {
+        if (Request.Cookies.TryGetValue(SessionCookie, out var cookie))
+        {
+            var role = await _accountService.TryGetRoleBySessionGuid(cookie);
+
+            if (role is not null &&
+                allowedRoles.Contains(role.Value))
+            {
+                return await action(dto);
+            }
+        }
+
+        return Redirect(IndexRedirect);
     }
 }
