@@ -14,129 +14,156 @@ public class AccountController : CommonController
     [HttpGet]
     public async Task<IActionResult> Index(SignInRequest request)
     {
-        var redirect = await TryRedirect();
-
-        return redirect ?? View(request);
+        return await ExecuteRedirect(
+            null,
+            async (request) =>
+            {
+                var dto = request as SignInRequest;
+                return View(dto);
+            },
+            request);
     }
 
     [HttpPost]
     public async Task<IActionResult> SignIn(SignInRequest request)
     {
-        var redirect = await TryRedirect();
-        if (redirect != null)
-        {
-            return redirect;
-        }
-
-        if (ModelState.IsValid)
-        {
-            var response = await _accountService.TrySignIn(request);
-
-            if (response != null)
+        return await ExecuteRedirect(
+            null,
+            async (request) =>
             {
-                SetCookies(response);
+                var dto = request as SignInRequest;
 
-                var result = RedirectAuthenticated(response.Role);
-                if (result != null)
+                if (ModelState.IsValid)
                 {
-                    return result;
-                }
-            }
-        }
+                    var response = await _accountService.TrySignIn(dto!);
 
-        return Redirect("/Account/Index?isFirstAttempt=false");
+                    if (response != null)
+                    {
+                        SetCookies(response);
+
+                        var result = RedirectAuthenticated(response.Role);
+                        if (result != null)
+                        {
+                            return result;
+                        }
+                    }
+                }
+
+                return Redirect("/Account/Index?isFirstAttempt=false");
+            },
+            request);
     }
 
     [HttpGet]
     public async Task<IActionResult> SignUp(SignUpRequest request)
     {
-        var redirect = await TryRedirect();
-
-        return redirect ?? View(request);
+        return await ExecuteRedirect(
+            null,
+            async (request) =>
+            {
+                var dto = request as SignUpRequest;
+                return View(dto);
+            },
+            request);
     }
 
     [HttpPost]
     public async Task<IActionResult> Register(SignUpRequest request)
     {
-        var redirect = await TryRedirect();
-        if (redirect != null)
-        {
-            return redirect;
-        }
-
-        if (ModelState.IsValid)
-        {
-            var response = await _accountService.TrySignUp(request);
-
-            if (response != null)
+        return await ExecuteRedirect(
+            null,
+            async (request) =>
             {
-                SetCookies(response);
-
-                var result = RedirectAuthenticated(response.Role);
-                if (result != null)
+                var dto = request as SignUpRequest;
+                if (ModelState.IsValid)
                 {
-                    return result;
-                }
-            }
-        }
+                    var response = await _accountService.TrySignUp(dto!);
 
-        return Redirect("/Account/SignUp?isFirstAttempt=false");
+                    if (response != null)
+                    {
+                        SetCookies(response);
+
+                        var result = RedirectAuthenticated(response.Role);
+                        if (result != null)
+                        {
+                            return result;
+                        }
+                    }
+                }
+
+                return Redirect("/Account/SignUp?isFirstAttempt=false");
+            },
+            request);
     }
 
     [HttpGet]
     public async Task<IActionResult> LogOut()
     {
-        var redirect = await TryRedirect();
-
-        if (redirect != null)
-        {
-            RemoveCookies();
-        }
-
-        return Redirect(IndexRedirect);
+        return await ExecuteRedirect(
+            () =>
+            {
+                RemoveCookies();
+                return Redirect(IndexRedirect);
+            },
+            async (NoParameters) =>
+            {
+                return Redirect(IndexRedirect);
+            },
+            NoParameters);
     }
 
     [HttpGet]
     public async Task<IActionResult> Account()
     {
-        if (Request.Cookies.TryGetValue(SessionCookie, out var cookie))
-        {
-            var account = await _accountService.TryGetAccount(cookie);
-            return View(account);
-        }
+        return await Execute(
+            Array.Empty<Role>(),
+            NoParameters,
+            async (NoParameters) =>
+            {
+                var array = NoParameters as object[];
+                var cookie = array[CookieIndex] as string;
 
-        return Redirect(IndexRedirect);
+                var account = await _accountService.TryGetAccount(cookie);
+                return View(account);
+            },
+            true);
     }
 
     [HttpPost]
     public async Task<IActionResult> UpdateAccount(UpdateAccountRequest request)
     {
-        if (Request.Cookies.TryGetValue(SessionCookie, out var cookie))
-        {
-            var result = await _accountService.TryUpdateAccount(cookie, request);
+        return await Execute(
+            Array.Empty<Role>(),
+            request,
+            async (request) =>
+            {
+                var array = request as object[];
+                var dto = array[DtoIndex] as UpdateAccountRequest;
+                var cookie = array[CookieIndex] as string;
 
-            if (result == null)
-            {
-                return Redirect("/Account/Account?isFirstAttempt=false");
-            }
-            else
-            {
-                var options = new CookieOptions()
+                var result = await _accountService.TryUpdateAccount(cookie, dto);
+
+                if (result == null)
                 {
-                    Expires = DateTime.UtcNow.AddDays(1),
-                    Domain = Request.Host.Host,
-                };
+                    return Redirect("/Account/Account?isFirstAttempt=false");
+                }
+                else
+                {
+                    var options = new CookieOptions()
+                    {
+                        Expires = DateTime.UtcNow.AddDays(1),
+                        Domain = Request.Host.Host,
+                    };
 
-                Response.Cookies.Append(
-                    UsernameCookie,
-                    result.Username,
-                    options);
+                    Response.Cookies.Append(
+                        UsernameCookie,
+                        result.Username,
+                        options);
 
-                return View("Account", result);
-            }
-        }
-
-        return Redirect(IndexRedirect);
+                    return View("Account", result);
+                }
+            },
+            true);
     }
 
     [HttpGet]

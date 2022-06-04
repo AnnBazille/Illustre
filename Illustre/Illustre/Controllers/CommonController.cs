@@ -23,6 +23,10 @@ public abstract class CommonController : Controller
 
     public const string NoParameters = "";
 
+    public const int DtoIndex = 0;
+
+    public const int CookieIndex = 1;
+
     protected readonly AccountService _accountService;
 
     public CommonController(AccountService accountService)
@@ -103,19 +107,51 @@ public abstract class CommonController : Controller
     public async Task<IActionResult> Execute(
         Role[] allowedRoles,
         object dto,
-        Func<object, Task<IActionResult>> action)
+        Func<object, Task<IActionResult>> action,
+        bool injectCookie = false)
     {
-        if (Request.Cookies.TryGetValue(SessionCookie, out var cookie))
+        if (Request.Cookies.TryGetValue(SessionCookie, out var cookie) &&
+            await CheckRoles(allowedRoles, cookie))
         {
-            var role = await _accountService.TryGetRoleBySessionGuid(cookie);
+            var parameter = dto;
 
-            if (role is not null &&
-                allowedRoles.Contains(role.Value))
+            if (injectCookie)
             {
-                return await action(dto);
+                var array = new object[] { dto, cookie };
+                parameter = array;
             }
+
+            return await action(parameter);
         }
 
         return Redirect(IndexRedirect);
+    }
+
+    public async Task<IActionResult> ExecuteRedirect(
+        Func<IActionResult>? redirectNotNullAction,
+        Func<object, Task<IActionResult>> redirectNullAction,
+        object redirectNullParameter)
+    {
+        var redirect = await TryRedirect();
+
+        if (redirect != null)
+        {
+            return redirectNotNullAction is not null ?
+                   redirectNotNullAction() :
+                   redirect;
+        }
+
+        return await redirectNullAction(redirectNullParameter);
+    }
+
+    private async Task<bool> CheckRoles(
+        Role[] allowedRoles,
+        string cookie)
+    {
+        var role = await _accountService.TryGetRoleBySessionGuid(cookie);
+
+        return role is not null &&
+              (allowedRoles.Count() == 0 ||
+               allowedRoles.Contains(role.Value));
     }
 }
