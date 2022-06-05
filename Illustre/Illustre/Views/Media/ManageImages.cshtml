@@ -1,0 +1,38 @@
+﻿@model ManageImagesRequest
+
+@{
+    ViewData["Title"] = "Manage Images";
+
+    if (Model is not null)
+    {
+        Model.ErrorMessage = "An error occured while editing or creating an image.";
+        Model.Action = "/Media/ManageImages";
+    }
+}
+
+<div class="illustre-form illustre-grayscale">
+    @{
+        @await Html.PartialAsync("~/Views/Shared/_ErrorMessage.cshtml", Model)
+
+        @await Html.PartialAsync("~/Views/Shared/_Search.cshtml", Model)
+        
+        @await Html.PartialAsync("~/Views/Media/Partial/_AddImage.cshtml", new AddImageRequest())
+        
+        if (Model.ImagesData is not null)
+        {
+            foreach (var imageItem in Model.ImagesData.Models)
+            {
+                @await Html.PartialAsync("~/Views/Media/Partial/_UpdateImageById.cshtml", imageItem)
+            }
+        }
+    }
+</div>
+
+@await Html.PartialAsync("~/Views/Shared/_Pagination.cshtml",
+                         new PaginationModel()
+                         {
+                             Total = Model.ImagesData?.Total,
+                             Skip = Model.Skip,
+                             AspController = "Media",
+                             AspAction = "ManageTags",
+                         })

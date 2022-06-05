@@ -75,8 +75,50 @@ public class MediaController : CommonController
             });
     }
 
+    [HttpGet]
+    public async Task<IActionResult> ManageImages(ManageImagesRequest request)
+    {
+        return await Execute(
+            new Role[] { Role.SuperAdmin, Role.Editor },
+            request,
+            async (request) =>
+            {
+                var dto = request as ManageImagesRequest;
+                dto!.ImagesData = await _mediaService
+                    .GetImages(dto.Skip, dto.SearchPattern);
+                return View(dto);
+            });
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> AddImage(AddImageRequest request)
+    {
+        return await Execute(
+            new Role[] { Role.SuperAdmin, Role.Editor },
+            request,
+            async (request) =>
+            {
+                var dto = request as AddImageRequest;
+                var result = false.ToString().ToLower();
+
+                if (ModelState.IsValid)
+                {
+                    result = (await _mediaService.TryAddImage(dto!))
+                        .ToString()
+                        .ToLower();
+                }
+
+                return Redirect(GetManageImagesRedirect(result));
+            });
+    }
+
     private string GetManageTagsRedirect(string isFirstAttempt)
     {
         return $"/Media/ManageTags?isFirstAttempt={isFirstAttempt}";
+    }
+
+    private string GetManageImagesRedirect(string isFirstAttempt)
+    {
+        return $"/Media/ManageImages?isFirstAttempt={isFirstAttempt}";
     }
 }

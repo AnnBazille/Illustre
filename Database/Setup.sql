@@ -21,7 +21,7 @@ CREATE TABLE [Accounts] (
     [IsActive]        BIT              NOT NULL          CONSTRAINT    [DF_Account_IsActive]    DEFAULT    1,
 
     CONSTRAINT    [PK_Account]                PRIMARY KEY    ([Id]),
-	CONSTRAINT    [CHK_Account_Role]          CHECK          ([Role]            IN    (0,    1,    2)),
+    CONSTRAINT    [CHK_Account_Role]          CHECK          ([Role]            IN    (0,    1,    2)),
     CONSTRAINT    [UQ_Account_Email]          UNIQUE         ([Email]),
     CONSTRAINT    [UQ_Account_SessionGuid]    UNIQUE         ([SessionGuid])
 );
@@ -33,7 +33,7 @@ CREATE TABLE [Tags] (
     [IsActive]    BIT             NOT NULL          CONSTRAINT    [DF_Tag_IsActive]    DEFAULT    1,
 
     CONSTRAINT    [PK_Tag]          PRIMARY KEY    ([Id]),
-	CONSTRAINT    [UQ_Tag_Title]    UNIQUE         ([Title])
+    CONSTRAINT    [UQ_Tag_Title]    UNIQUE         ([Title])
 );
 GO
 
@@ -55,7 +55,7 @@ CREATE TABLE [ImageProperties] (
     CONSTRAINT    [PK_ImageProperty]            PRIMARY KEY    ([Id]),
     CONSTRAINT    [FK_ImageProperty_ImageId]    FOREIGN KEY    ([ImageId])    REFERENCES    [Images]    ([Id]),
     CONSTRAINT    [FK_ImageProperty_TagId]      FOREIGN KEY    ([TagId])      REFERENCES    [Tags]      ([Id]),
-	CONSTRAINT    [UQ_ImageProperty_Ids]        UNIQUE         ([ImageId],    [TagId])
+    CONSTRAINT    [UQ_ImageProperty_Ids]        UNIQUE         ([ImageId],    [TagId])
 );
 GO
 

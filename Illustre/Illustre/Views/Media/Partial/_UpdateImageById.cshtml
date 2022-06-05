@@ -1,10 +1,10 @@
-﻿@model ManageTagModel
+﻿@model ManageImageModel
 
-<form method="post" action="/Media/UpdateTagById">
+<form method="post" action="/Media/UpdateImageById">
     <input type="hidden" asp-for="Id" value="@Model.Id">
     <div class="input-group mb-3">
         <input type="text" class="form-control" asp-for="Title" placeholder="title" value="@Model.Title">
-        <a role="button" class="btn btn-dark" asp-controller="Media" asp-action="ManageImages" asp-route-isFirstAttempt="true">Manage Images</a>
+        <a role="button" class="btn btn-dark" asp-controller="Media" asp-action="ManageTags" asp-route-isFirstAttempt="true">Manage Tags</a>
         <div class="input-group-text">
             <input type="checkbox" class="form-check-input mt-0" asp-for="IsActive" id="is-active-@Model.Id" checked="@Model.IsActive">
             <label class="form-check-label illustre-checkbox-label" for="is-active-@Model.Id">Is Active</label>
