@@ -1,21 +1,18 @@
 ﻿@model SignUpRequest
+
 @{
     ViewData["Title"] = "Registration";
+
+    if (Model is not null)
+    {
+        Model.ErrorMessage = "Email is already used.";
+    }
 }
 
 <form method="post" action="/Account/Register">
     <div class="container illustre-form">
         <div class="row g-1">
-            @{
-                if (Model != null && !Model.IsFirstAttempt)
-                {
-                    <div class="col-12 alert alert-light alert-dismissible fade show" role="alert">
-                        <span>Email is already used.</span>
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                    Model.IsFirstAttempt = true;
-                }
-            }
+            @await Html.PartialAsync("~/Views/Shared/_ErrorMessage.cshtml", Model)
             <div class="col-12">
                 <input type="email" class="form-control" id="email" placeholder="email" asp-for="Email"/>
             </div>

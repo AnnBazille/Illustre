@@ -1,4 +1,5 @@
-﻿using Data.Contracts.Accounts;
+﻿using Data;
+using Data.Contracts.Accounts;
 using Data.Entities;
 using Illustre.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -156,7 +157,7 @@ public class AccountController : CommonController
                     };
 
                     Response.Cookies.Append(
-                        UsernameCookie,
+                        ConstantsHelper.UsernameCookie,
                         result.Username,
                         options);
 

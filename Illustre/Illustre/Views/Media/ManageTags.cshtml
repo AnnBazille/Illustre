@@ -2,27 +2,21 @@
 
 @{
     ViewData["Title"] = "Manage Tags";
+
+    if (Model is not null)
+    {
+        Model.ErrorMessage = "An error occured while editing or creating a tag.";
+        Model.Action = "/Media/ManageTags";
+    }
 }
 
 <div class="illustre-form illustre-grayscale">
     @{
-        if (!Model.IsFirstAttempt)
-        {
-            <div class="col-12 alert alert-light alert-dismissible fade show" role="alert">
-                <span>An error occured while editing or creating a tag.</span>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-            Model.IsFirstAttempt = true;
-        }
+        @await Html.PartialAsync("~/Views/Shared/_ErrorMessage.cshtml", Model)
 
-        <form method="get" action="/Media/ManageTags">
-            <div class="input-group mb-3">
-                <input type="text" class="form-control" asp-for="SearchPattern" placeholder="search" value="@Model.SearchPattern">
-                <button type="submit" class="btn btn-outline-dark">Search</button>
-            </div>
-        </form>
+        @await Html.PartialAsync("~/Views/Shared/_Search.cshtml", Model)
         
-        @await Html.PartialAsync("~/Views/Media/Partial/_AddTag.cshtml", new AddTagRequest());
+        @await Html.PartialAsync("~/Views/Media/Partial/_AddTag.cshtml", new AddTagRequest())
         
         if (Model.TagsData is not null)
         {

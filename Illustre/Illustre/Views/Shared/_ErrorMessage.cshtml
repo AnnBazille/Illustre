@@ -1,0 +1,12 @@
+﻿@model FailableRequest
+
+@{
+    if (Model != null && !Model.IsFirstAttempt)
+    {
+        <div class="col-12 alert alert-light alert-dismissible fade show" role="alert">
+            <span>@Model.ErrorMessage</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        Model.IsFirstAttempt = true;
+    }
+}

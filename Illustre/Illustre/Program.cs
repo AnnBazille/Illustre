@@ -3,11 +3,11 @@ using Data.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Service;
 
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
 builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddDbContext<DatabaseContext>(options =>

@@ -2,31 +2,25 @@
 
 @{
     ViewData["Title"] = "Manage Editors";
+
+    if (Model is not null)
+    {
+        Model.ErrorMessage = "An error occured while editing or creating an account.";
+        Model.Action = "/Account/ManageEditors";
+    }
 }
 
 <div class="illustre-form illustre-grayscale">
     @{
-        if (!Model.IsFirstAttempt)
-        {
-            <div class="col-12 alert alert-light alert-dismissible fade show" role="alert">
-                <span>An error occured while editing or creating an account.</span>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-            Model.IsFirstAttempt = true;
-        }
+        @await Html.PartialAsync("~/Views/Shared/_ErrorMessage.cshtml", Model)
 
-        <form method="get" action="/Account/ManageEditors">
-            <div class="input-group mb-3">
-                <input type="text" class="form-control" asp-for="SearchPattern" placeholder="search" value="@Model.SearchPattern">
-                <button type="submit" class="btn btn-outline-dark">Search</button>
-            </div>
-        </form>
+        @await Html.PartialAsync("~/Views/Shared/_Search.cshtml", Model)
         
         @await Html.PartialAsync("~/Views/Account/Partial/_AddAccount.cshtml",
                                 new AddAccountRequest()
                                 {
                                     Role = Role.Editor,
-                                });
+                                })
         
         if (Model.AccountsData is not null)
         {

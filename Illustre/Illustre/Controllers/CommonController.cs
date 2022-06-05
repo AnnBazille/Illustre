@@ -1,4 +1,5 @@
-﻿using Data.Contracts.Accounts;
+﻿using Data;
+using Data.Contracts.Accounts;
 using Data.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Service;
@@ -7,12 +8,6 @@ namespace Illustre.Controllers;
 
 public abstract class CommonController : Controller
 {
-    public const string SessionCookie = "session-id";
-
-    public const string UsernameCookie = "username";
-
-    public const string RoleCookie = "role";
-
     public const string SuperAdminMenuRedirect = "/Main/SuperAdminMenu";
 
     public const string EditorMenuRedirect = "/Main/EditorMenu";
@@ -36,7 +31,7 @@ public abstract class CommonController : Controller
 
     public async Task<IActionResult?> TryRedirect()
     {
-        if (Request.Cookies.TryGetValue(SessionCookie, out var cookie))
+        if (Request.Cookies.TryGetValue(ConstantsHelper.SessionCookie, out var cookie))
         {
             var role = await _accountService.TryGetRoleBySessionGuid(cookie!);
             if (role != null)
@@ -82,26 +77,26 @@ public abstract class CommonController : Controller
         };
 
         Response.Cookies.Append(
-            SessionCookie,
+            ConstantsHelper.SessionCookie,
             response.SessionGuid,
             options);
 
         Response.Cookies.Append(
-            UsernameCookie,
+            ConstantsHelper.UsernameCookie,
             response.Username,
             options);
 
         Response.Cookies.Append(
-            RoleCookie,
+            ConstantsHelper.RoleCookie,
             response.Role.ToString(),
             options);
     }
 
     public void RemoveCookies()
     {
-        Response.Cookies.Delete(SessionCookie);
-        Response.Cookies.Delete(UsernameCookie);
-        Response.Cookies.Delete(RoleCookie);
+        Response.Cookies.Delete(ConstantsHelper.SessionCookie);
+        Response.Cookies.Delete(ConstantsHelper.UsernameCookie);
+        Response.Cookies.Delete(ConstantsHelper.RoleCookie);
     }
 
     public async Task<IActionResult> Execute(
@@ -110,7 +105,7 @@ public abstract class CommonController : Controller
         Func<object, Task<IActionResult>> action,
         bool injectCookie = false)
     {
-        if (Request.Cookies.TryGetValue(SessionCookie, out var cookie) &&
+        if (Request.Cookies.TryGetValue(ConstantsHelper.SessionCookie, out var cookie) &&
             await CheckRoles(allowedRoles, cookie))
         {
             var parameter = dto;

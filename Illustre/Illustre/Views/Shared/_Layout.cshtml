@@ -20,8 +20,8 @@
                     @{
                         if (HttpContextAccessor is not null &&
                             HttpContextAccessor.HttpContext is not null &&
-                            HttpContextAccessor.HttpContext.Request.Cookies.TryGetValue("username", out var usernameCookie) &&
-                            HttpContextAccessor.HttpContext.Request.Cookies.TryGetValue("role", out var roleCookie))
+                            HttpContextAccessor.HttpContext.Request.Cookies.TryGetValue(ConstantsHelper.UsernameCookie, out var usernameCookie) &&
+                            HttpContextAccessor.HttpContext.Request.Cookies.TryGetValue(ConstantsHelper.RoleCookie, out var roleCookie))
                         {
                             <div class="nav-item dropdown illustre-grayscale">
                                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -48,7 +48,7 @@
         @{
             if (HttpContextAccessor is not null &&
                 HttpContextAccessor.HttpContext is not null &&
-               !HttpContextAccessor.HttpContext.Request.Cookies.TryGetValue("accept-cookie", out var acceptCookie))
+               !HttpContextAccessor.HttpContext.Request.Cookies.TryGetValue(ConstantsHelper.AcceptCookie, out var acceptCookie))
             {
                 <div class="container illustre-form">
                     <div class="row g-1">
@@ -65,7 +65,7 @@
                     Expires = DateTime.UtcNow.AddDays(1),
                     Domain = HttpContextAccessor.HttpContext.Request.Host.Host,
                 };
-                HttpContextAccessor.HttpContext.Response.Cookies.Append("accept-cookie", "accept", options);
+                HttpContextAccessor.HttpContext.Response.Cookies.Append(ConstantsHelper.AcceptCookie, "accept", options);
             }
         }
     </header>

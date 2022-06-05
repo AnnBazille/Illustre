@@ -9,4 +9,6 @@ public class ManageTagsRequest : FailableRequest, ISearchable
     public ManageTagsModel? TagsData { get; set; }
 
     public string? SearchPattern { get; set; }
+
+    public string? Action { get; set; }
 }

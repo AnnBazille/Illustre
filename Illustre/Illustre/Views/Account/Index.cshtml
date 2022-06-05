@@ -2,21 +2,17 @@
 
 @{
     ViewData["Title"] = "Index";
+
+    if (Model is not null)
+    {
+        Model.ErrorMessage = "User wasn't found.";
+    }
 }
 
 <form method="post" action="/Account/SignIn">
     <div class="container illustre-form">
         <div class="row g-1">
-            @{
-                if (Model != null && !Model.IsFirstAttempt)
-                {
-                    <div class="col-12 alert alert-light alert-dismissible fade show" role="alert">
-                        <span>User wasn't found.</span>
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                    Model.IsFirstAttempt = true;
-                }
-            }
+            @await Html.PartialAsync("~/Views/Shared/_ErrorMessage.cshtml", Model)
             <div class="col-12">
                 <input type="email" class="form-control" id="email" placeholder="email" asp-for="Email"/>
             </div>

@@ -9,4 +9,6 @@ public class ManageAccountsRequest : FailableRequest, ISearchable
     public ManageAccountsModel? AccountsData { get; set; }
 
     public string? SearchPattern { get; set; }
+
+    public string? Action { get; set; }
 }
