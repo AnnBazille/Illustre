@@ -224,4 +224,52 @@ public class MediaRepository : BaseRepository
             return false;
         }
     }
+
+    public async Task<ManageTagsModel> GetEditableTags(int skip, string? search, int imageId)
+    {
+        var result = new ManageTagsModel();
+
+        Expression<Func<Tag, bool>> predicate = x => string.IsNullOrEmpty(search) ||
+                                                     x.Title.Contains(search);
+
+        result.Total = await DatabaseContext.Tags
+            .AsNoTracking()
+            .CountAsync(predicate);
+        result.Models = await DatabaseContext.Tags
+            .AsNoTracking()
+            .Where(predicate)
+            .OrderBy(x => x.Id)
+            .Skip(skip)
+            .Take(ConstantsHelper.PageSize)
+            .Select(x => new EditTagModel()
+            {
+                Id = x.Id,
+                Title = x.Title,
+                IsActive = false,
+            })
+            .ToListAsync();
+
+        var tagIds = result.Models
+            .Select(x => x.Id);
+
+        var imageProperties = await DatabaseContext.ImageProperties
+            .AsNoTracking()
+            .Where(x => tagIds.Contains(x.TagId))
+            .ToDictionaryAsync(
+            key => key.TagId,
+            value => value.ImageId);
+
+        foreach (var item in result.Models)
+        {
+            var model = item as EditTagModel;
+
+            if (imageProperties.ContainsKey(model!.Id))
+            {
+                model.IsActive = true;
+                model.ImageId = imageProperties[model.Id];
+            }
+        }
+
+        return result;
+    }
 }

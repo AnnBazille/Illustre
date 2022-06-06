@@ -48,8 +48,10 @@ public class MediaController : CommonController
                         .ToString()
                         .ToLower();
                 }
-                
-                return Redirect(GetManageTagsRedirect(result));
+
+                var redirect = dto!.Action + $"?isFirstAttempt={result}";
+
+                return Redirect(redirect);
             });
     }
 
@@ -131,6 +133,21 @@ public class MediaController : CommonController
                 }
 
                 return Redirect(GetManageImagesRedirect(result));
+            });
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> EditTags(EditTagsRequest request)
+    {
+        return await Execute(
+            new Role[] { Role.SuperAdmin, Role.Editor },
+            request,
+            async (request) =>
+            {
+                var dto = request as EditTagsRequest;
+                dto!.TagsData = await _mediaService
+                .GetEditableTags(dto.Skip, dto.SearchPattern, dto.ImageId);
+                return View(dto);
             });
     }
 

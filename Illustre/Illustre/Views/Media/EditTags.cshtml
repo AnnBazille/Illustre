@@ -1,12 +1,12 @@
-﻿@model ManageTagsRequest
+﻿@model EditTagsRequest
 
 @{
-    ViewData["Title"] = "Manage Tags";
+    ViewData["Title"] = "Edit Tags";
 
     if (Model is not null)
     {
         Model.ErrorMessage = "An error occured while editing or creating a tag.";
-        Model.Action = "/Media/ManageTags";
+        Model.Action = "/Media/EditTags";
     }
 }
 
@@ -26,7 +26,7 @@
         {
             foreach (var tagItem in Model.TagsData.Models)
             {
-                @await Html.PartialAsync("~/Views/Media/Partial/_UpdateTagById.cshtml", tagItem)
+                @await Html.PartialAsync("~/Views/Media/Partial/_EditTagById.cshtml", tagItem)
             }
         }
     }
@@ -38,5 +38,5 @@
                              Total = Model.TagsData?.Total,
                              Skip = Model.Skip,
                              AspController = "Media",
-                             AspAction = "ManageTags",
+                             AspAction = "EditTags",
                          })

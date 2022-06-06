@@ -91,3 +91,7 @@ body {
     background-repeat: no-repeat;
     background-size: cover;
 }
+
+.illustre-half-width {
+    width: 50%;
+}

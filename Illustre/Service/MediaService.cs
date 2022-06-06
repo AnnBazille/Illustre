@@ -41,4 +41,9 @@ public class MediaService
     {
         return await _mediaRepository.TryUpdateImageById(model);
     }
+
+    public async Task<ManageTagsModel> GetEditableTags(int skip, string? search, int imageId)
+    {
+        return await _mediaRepository.GetEditableTags(skip, search, imageId);
+    }
 }

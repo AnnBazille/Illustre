@@ -1,6 +1,7 @@
 ﻿@model AddTagRequest
 
 <form method="post" action="/Media/AddTag">
+    <input type="hidden" asp-for="Action" value="@Model.Action">
     <div class="input-group mb-3">
         <input type="text" class="form-control" asp-for="Title" placeholder="title" value="@Model.Title">
         <button type="submit" class="btn btn-outline-dark">Add Tag</button>

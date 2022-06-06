@@ -7,4 +7,6 @@ public class AddTagRequest : FailableRequest
 {
     [Required]
     public string Title { get; set; }
+
+    public string? Action { get; set; }
 }
