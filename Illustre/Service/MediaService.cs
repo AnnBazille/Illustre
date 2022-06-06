@@ -36,4 +36,9 @@ public class MediaService
     {
         return await _mediaRepository.TryAddImage(request);
     }
+
+    public async Task<bool> TryUpdateImageById(ManageImageModel model)
+    {
+        return await _mediaRepository.TryUpdateImageById(model);
+    }
 }

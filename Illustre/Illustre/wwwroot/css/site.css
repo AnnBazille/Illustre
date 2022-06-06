@@ -48,16 +48,13 @@ body {
 }
 
 .illustre-container,
-.illustre-col{
+.illustre-col,
+.illustre-input-group {
     padding: 0;
 }
 
 .illustre-row {
     margin: 0;
-}
-
-.illustre-input-group {
-    padding: 0;
 }
 
 .illustre-input-group-item-left {

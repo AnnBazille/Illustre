@@ -12,4 +12,6 @@ public class ManageImageModel : FailableRequest
     public bool IsActive { get; set; }
 
     public string? Title { get; set; }
+
+    public string? Image { get; set; }
 }

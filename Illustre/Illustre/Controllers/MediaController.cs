@@ -112,6 +112,28 @@ public class MediaController : CommonController
             });
     }
 
+    [HttpPost]
+    public async Task<IActionResult> UpdateImageById(ManageImageModel model)
+    {
+        return await Execute(
+            new Role[] { Role.SuperAdmin, Role.Editor },
+            model,
+            async (model) =>
+            {
+                var dto = model as ManageImageModel;
+                var result = false.ToString().ToLower();
+
+                if (ModelState.IsValid)
+                {
+                    result = (await _mediaService.TryUpdateImageById(dto!))
+                        .ToString()
+                        .ToLower();
+                }
+
+                return Redirect(GetManageImagesRedirect(result));
+            });
+    }
+
     private string GetManageTagsRedirect(string isFirstAttempt)
     {
         return $"/Media/ManageTags?isFirstAttempt={isFirstAttempt}";

@@ -126,6 +126,32 @@ public class MediaRepository : BaseRepository
             })
             .ToListAsync();
 
+        foreach (var item in result.Models)
+        {
+            try
+            {
+                BlobClient blob = new BlobClient(
+                       BlobConnectionString,
+                       ContainerName,
+                       item.Id.ToString());
+
+                var content = await blob.DownloadAsync();
+
+                using var memoryStream = new MemoryStream();
+
+                await content.Value.Content.CopyToAsync(memoryStream);
+
+                var bytes = memoryStream.ToArray();
+
+                var imageBase64Data = Convert.ToBase64String(bytes);
+
+                item.Image = string.Format("data:image/png;base64,{0}", imageBase64Data);
+                item.Image = item.Image.Replace("\r", "");
+                item.Image = item.Image.Replace("\n", "");
+            }
+            catch { }
+        }
+
         return result;
     }
 
@@ -169,5 +195,33 @@ public class MediaRepository : BaseRepository
         }
 
         return result;
+    }
+
+    public async Task<bool> TryUpdateImageById(ManageImageModel model)
+    {
+        var image = await DatabaseContext.Images
+            .FirstOrDefaultAsync(x => x.Id == model.Id);
+
+        if (image == null)
+        {
+            return false;
+        }
+
+        image.IsActive = model.IsActive;
+
+        if (model.Title is not null)
+        {
+            image.Title = model.Title;
+        }
+
+        try
+        {
+            await DatabaseContext.SaveChangesAsync();
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
     }
 }
