@@ -2,7 +2,7 @@
 
 <form method="post" action="/Media/UpdateImageById">
     <input type="hidden" asp-for="Id" value="@Model.Id">
-    <div class="input-group mb-3">
+    <div class="input-group mb-3 illustre-grayscale">
         <input type="text" class="form-control" asp-for="Title" placeholder="title" value="@Model.Title">
         <a role="button" class="btn btn-dark" asp-controller="Media" asp-action="ManageTags" asp-route-isFirstAttempt="true">Manage Tags</a>
         <div class="input-group-text">
