@@ -48,7 +48,7 @@
                     </div>
                     <div class="row illustre-row">
                         <div class="input-group illustre-input-group">
-                            <a role="button" class="btn btn-dark illustre-input-group-item-inside illustre-half-width" target="_blank" asp-controller="Media" asp-action="EditTags" asp-route-isFirstAttempt="true">Edit Tags</a>
+                            <a role="button" class="btn btn-dark illustre-input-group-item-inside illustre-half-width" target="_blank" asp-controller="Media" asp-action="EditTags" asp-route-isFirstAttempt="true" asp-route-imageId="@Model.Id">Edit Tags</a>
                             <div class="input-group-text illustre-input-group-item-inside illustre-half-width">
                                 <input type="checkbox" class="form-check-input mt-0" asp-for="IsActive" id="is-active-@Model.Id" checked="@Model.IsActive">
                                 <label class="form-check-label illustre-checkbox-label" for="is-active-@Model.Id">Is Active</label>

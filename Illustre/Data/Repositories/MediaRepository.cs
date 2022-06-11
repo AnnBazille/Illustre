@@ -254,7 +254,8 @@ public class MediaRepository : BaseRepository
 
         var imageProperties = await DatabaseContext.ImageProperties
             .AsNoTracking()
-            .Where(x => tagIds.Contains(x.TagId))
+            .Where(x => tagIds.Contains(x.TagId) &&
+                        x.ImageId == imageId)
             .ToDictionaryAsync(
             key => key.TagId,
             value => value.ImageId);
@@ -262,14 +263,35 @@ public class MediaRepository : BaseRepository
         foreach (var item in result.Models)
         {
             var model = item as EditTagModel;
+            model!.ImageId = imageId;
 
             if (imageProperties.ContainsKey(model!.Id))
             {
                 model.IsActive = true;
-                model.ImageId = imageProperties[model.Id];
             }
         }
 
         return result;
+    }
+
+    public async Task<bool> TryEditTagById(int tagId, int imageId)
+    {
+        var imageProperty = new ImageProperty()
+        {
+            TagId = tagId,
+            ImageId = imageId,
+        };
+
+        try
+        {
+            await DatabaseContext.ImageProperties.AddAsync(imageProperty);
+            await DatabaseContext.SaveChangesAsync();
+
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
     }
 }

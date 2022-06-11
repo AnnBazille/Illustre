@@ -151,6 +151,28 @@ public class MediaController : CommonController
             });
     }
 
+    [HttpPost]
+    public async Task<IActionResult> EditTagById(EditTagModel model)
+    {
+        return await Execute(
+            new Role[] { Role.SuperAdmin, Role.Editor },
+            model,
+            async (model) =>
+            {
+                var dto = model as EditTagModel;
+                var result = false.ToString().ToLower();
+
+                if (ModelState.IsValid)
+                {
+                    result = (await _mediaService.TryEditTagById(dto!))
+                        .ToString()
+                        .ToLower();
+                }
+
+                return Redirect(GetEditTagsRedirect(result, dto.ImageId));
+            });
+    }
+
     private string GetManageTagsRedirect(string isFirstAttempt)
     {
         return $"/Media/ManageTags?isFirstAttempt={isFirstAttempt}";
@@ -159,5 +181,10 @@ public class MediaController : CommonController
     private string GetManageImagesRedirect(string isFirstAttempt)
     {
         return $"/Media/ManageImages?isFirstAttempt={isFirstAttempt}";
+    }
+
+    private string GetEditTagsRedirect(string isFirstAttempt, int imageId)
+    {
+        return $"/Media/EditTags?isFirstAttempt={isFirstAttempt}&imageId=" + imageId;
     }
 }

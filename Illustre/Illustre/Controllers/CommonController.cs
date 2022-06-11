@@ -29,7 +29,7 @@ public abstract class CommonController : Controller
         _accountService = accountService;
     }
 
-    public async Task<IActionResult?> TryRedirect()
+    protected async Task<IActionResult?> TryRedirect()
     {
         if (Request.Cookies.TryGetValue(ConstantsHelper.SessionCookie, out var cookie))
         {
@@ -47,7 +47,7 @@ public abstract class CommonController : Controller
         return null;
     }
 
-    public RedirectResult? RedirectAuthenticated(Role role)
+    protected RedirectResult? RedirectAuthenticated(Role role)
     {
         switch (role)
         {
@@ -68,7 +68,7 @@ public abstract class CommonController : Controller
         return null;
     }
 
-    public void SetCookies(SignInResponse response)
+    protected void SetCookies(SignInResponse response)
     {
         var options = new CookieOptions()
         {
@@ -92,14 +92,14 @@ public abstract class CommonController : Controller
             options);
     }
 
-    public void RemoveCookies()
+    protected void RemoveCookies()
     {
         Response.Cookies.Delete(ConstantsHelper.SessionCookie);
         Response.Cookies.Delete(ConstantsHelper.UsernameCookie);
         Response.Cookies.Delete(ConstantsHelper.RoleCookie);
     }
 
-    public async Task<IActionResult> Execute(
+    protected async Task<IActionResult> Execute(
         Role[] allowedRoles,
         object dto,
         Func<object, Task<IActionResult>> action,
@@ -122,7 +122,7 @@ public abstract class CommonController : Controller
         return Redirect(IndexRedirect);
     }
 
-    public async Task<IActionResult> ExecuteRedirect(
+    protected async Task<IActionResult> ExecuteRedirect(
         Func<IActionResult>? redirectNotNullAction,
         Func<object, Task<IActionResult>> redirectNullAction,
         object redirectNullParameter)
