@@ -1,11 +1,43 @@
 ﻿@model ManageImageModel
 
-<form method="post" enctype="multipart/form-data" action="/Media/UpdateImageById">
+@{
+    var modalId = "modal-" + Model.Id.ToString();
+    var hashtag = "#" + modalId;
+}
+
+
+
+<form method="post"
+      enctype="multipart/form-data"
+      action="/Media/UpdateImageById">
     <input type="hidden" asp-for="Id" value="@Model.Id">
     <div class="container illustre-container mb-3">
         <div class="row illustre-row">
             <div class="col-3 illustre-col">
-                <div class="illustre-input-group-item-left illustre-input-group-image-container-left" id="illustre-image-preview" style='background-image:url("@Model.Image")'></div>
+                <div class="modal fade" id="@modalId" tabindex="-1" role="dialog">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">@Model.Title</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <img src="@Model.Image" class="img-fluid mx-auto d-block">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <a href="@hashtag"
+                   data-bs-toggle="modal"
+                   data-bs-target="@hashtag"
+                   onclick="console.log('click');">
+                    <div class="illustre-input-group-item-left
+                                illustre-input-group-image-container-left"
+                         id="illustre-image-preview"
+                         style='background-image:url("@Model.Image")'>
+                    </div>
+                </a>
             </div>
             <div class="col-7 illustre-col illustre-grayscale">
                 <div class="container illustre-container">
