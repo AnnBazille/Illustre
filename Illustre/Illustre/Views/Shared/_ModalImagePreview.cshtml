@@ -1,0 +1,24 @@
+﻿@model ModalImagePreviewModel
+
+<div class="modal fade" id="@Model.ModalId" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">@Model.Title</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                </button>
+            </div>
+            <div class="modal-body">
+                <img src="@Model.Image" class="img-fluid mx-auto d-block">
+            </div>
+        </div>
+    </div>
+</div>
+<a href="@Model.Hashtag"
+   data-bs-toggle="modal"
+   data-bs-target="@Model.Hashtag">
+    <div class="illustre-input-group-item-left
+                illustre-input-group-image-container-left"
+         style='background-image:url("@Model.Image")'>
+    </div>
+</a>
