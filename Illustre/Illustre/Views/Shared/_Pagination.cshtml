@@ -99,8 +99,22 @@
                pageNumber > currentPageNumber + next;
     }
 
+    public bool IsOnlyOneInInterval(int leftBoundary, int rightBoundary, int currentValue, bool isLeftInterval)
+    {
+        const int offset = 2;
+
+        return ((isLeftInterval &&
+               currentValue == leftBoundary) ||
+               (!isLeftInterval &&
+               currentValue == rightBoundary)) &&
+               rightBoundary - leftBoundary == offset;
+    }
+
     public async Task RenderSelectedButtons(int pages, int currentPageNumber)
     {
+        const int firstPage = 1;
+        const int offset = 3;
+
         var isLeftInvervalUsed = false;
         var isRigthInvervalUsed = false;
         for (int i = 1; i <= pages; i++)
@@ -118,13 +132,36 @@
                      !isLeftInvervalUsed)
             {
                 isLeftInvervalUsed = true;
-                RenderThreeDotsButton();
+
+                if (IsOnlyOneInInterval(
+                    firstPage + offset,
+                    currentPageNumber,
+                    i,
+                    true))
+                {
+                    await RenderButton(active, skip, i);
+                }
+                else
+                {
+                    RenderThreeDotsButton();
+                }
             }
             else if (IsInRightInterval(i, pages, currentPageNumber) &&
                      !isRigthInvervalUsed)
             {
                 isRigthInvervalUsed = true;
-                RenderThreeDotsButton();
+                if (IsOnlyOneInInterval(
+                    currentPageNumber,
+                    pages - offset,
+                    i,
+                    false))
+                {
+                    await RenderButton(active, skip, i);
+                }
+                else
+                {
+                    RenderThreeDotsButton();
+                }
             }
         }
     }
