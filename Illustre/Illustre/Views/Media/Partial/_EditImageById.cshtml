@@ -1,4 +1,4 @@
-﻿@model ManageImageModel
+﻿@model EditImageModel
 
 @{
     var modalId = "modal-" + Model.Id.ToString();
@@ -6,8 +6,9 @@
 }
 
 <form method="post"
-      action="/Media/UpdateImageById">
+      action="/Media/EditImageById">
     <input type="hidden" asp-for="Id" value="@Model.Id">
+    <input type="hidden" asp-for="TagId" value="@Model.TagId">
     <div class="container illustre-container mb-3">
         <div class="row illustre-row">
             <div class="col-3 illustre-col">
@@ -40,7 +41,7 @@
                 <div class="container illustre-container">
                     <div class="row illustre-row">
                         <div class="input-group illustre-input-group">
-                            <input type="text" class="form-control illustre-input-group-item-inside illustre-input-group-item-no-bottom-border" asp-for="Title" placeholder="title" value="@Model.Title">
+                            <input type="text" class="form-control illustre-input-group-item-inside illustre-input-group-item-no-bottom-border" asp-for="Title" placeholder="title" value="@Model.Title" disabled>
                         </div>
                     </div>
                     <div class="row illustre-row">

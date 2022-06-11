@@ -49,6 +49,16 @@ public class MediaService
 
     public async Task<bool> TryEditTagById(EditTagModel model)
     {
-        return await _mediaRepository.TryEditTagById(model.Id, model.ImageId);
+        return await _mediaRepository.TryAddImageProperty(model.Id, model.ImageId, model.IsActive);
+    }
+
+    public async Task<ManageImagesModel> GetEditableImages(int skip, string? search, int tagId)
+    {
+        return await _mediaRepository.GetEditableImages(skip, search, tagId);
+    }
+
+    public async Task<bool> TryEditImageById(EditImageModel model)
+    {
+        return await _mediaRepository.TryAddImageProperty(model.TagId, model.Id, model.IsActive);
     }
 }

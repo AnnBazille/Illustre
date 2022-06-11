@@ -173,6 +173,43 @@ public class MediaController : CommonController
             });
     }
 
+    [HttpGet]
+    public async Task<IActionResult> EditImages(EditImagesRequest request)
+    {
+        return await Execute(
+            new Role[] { Role.SuperAdmin, Role.Editor },
+            request,
+            async (request) =>
+            {
+                var dto = request as EditImagesRequest;
+                dto!.ImagesData = await _mediaService
+                .GetEditableImages(dto.Skip, dto.SearchPattern, dto.TagId);
+                return View(dto);
+            });
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> EditImageById(EditImageModel model)
+    {
+        return await Execute(
+            new Role[] { Role.SuperAdmin, Role.Editor },
+            model,
+            async (model) =>
+            {
+                var dto = model as EditImageModel;
+                var result = false.ToString().ToLower();
+
+                if (ModelState.IsValid)
+                {
+                    result = (await _mediaService.TryEditImageById(dto!))
+                        .ToString()
+                        .ToLower();
+                }
+
+                return Redirect(GetEditImagesRedirect(result, dto.TagId));
+            });
+    }
+
     private string GetManageTagsRedirect(string isFirstAttempt)
     {
         return $"/Media/ManageTags?isFirstAttempt={isFirstAttempt}";
@@ -186,5 +223,10 @@ public class MediaController : CommonController
     private string GetEditTagsRedirect(string isFirstAttempt, int imageId)
     {
         return $"/Media/EditTags?isFirstAttempt={isFirstAttempt}&imageId=" + imageId;
+    }
+
+    private string GetEditImagesRedirect(string isFirstAttempt, int tagId)
+    {
+        return $"/Media/EditImages?isFirstAttempt={isFirstAttempt}&tagId=" + tagId;
     }
 }

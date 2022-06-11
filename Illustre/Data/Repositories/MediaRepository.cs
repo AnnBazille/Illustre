@@ -255,7 +255,8 @@ public class MediaRepository : BaseRepository
         var imageProperties = await DatabaseContext.ImageProperties
             .AsNoTracking()
             .Where(x => tagIds.Contains(x.TagId) &&
-                        x.ImageId == imageId)
+                        x.ImageId == imageId &&
+                        x.IsActive)
             .ToDictionaryAsync(
             key => key.TagId,
             value => value.ImageId);
@@ -274,17 +275,33 @@ public class MediaRepository : BaseRepository
         return result;
     }
 
-    public async Task<bool> TryEditTagById(int tagId, int imageId)
+    public async Task<bool> TryAddImageProperty(int tagId, int imageId, bool isActive)
     {
-        var imageProperty = new ImageProperty()
+        var imageProperty = await DatabaseContext.ImageProperties
+            .FirstOrDefaultAsync(x => x.TagId == tagId &&
+                                      x.ImageId == imageId);
+
+        var isNew = false;
+
+        if (imageProperty == null)
         {
-            TagId = tagId,
-            ImageId = imageId,
-        };
+            isNew = true;
+            imageProperty = new ImageProperty()
+            {
+                TagId = tagId,
+                ImageId = imageId,
+            };
+        }
+
+        imageProperty.IsActive = isActive;
 
         try
         {
-            await DatabaseContext.ImageProperties.AddAsync(imageProperty);
+            if (isNew)
+            {
+                await DatabaseContext.ImageProperties.AddAsync(imageProperty);
+            }
+            
             await DatabaseContext.SaveChangesAsync();
 
             return true;
@@ -293,5 +310,78 @@ public class MediaRepository : BaseRepository
         {
             return false;
         }
+    }
+
+    public async Task<ManageImagesModel> GetEditableImages(int skip, string? search, int tagId)
+    {
+        var result = new ManageImagesModel();
+
+        Expression<Func<Image, bool>> predicate = x => string.IsNullOrEmpty(search) ||
+                                                     x.Title.Contains(search);
+
+        result.Total = await DatabaseContext.Images
+            .AsNoTracking()
+            .CountAsync(predicate);
+        result.Models = await DatabaseContext.Images
+            .AsNoTracking()
+            .Where(predicate)
+            .OrderBy(x => x.Id)
+            .Skip(skip)
+            .Take(ConstantsHelper.PageSize)
+            .Select(x => new EditImageModel()
+            {
+                Id = x.Id,
+                Title = x.Title,
+                IsActive = false,
+            })
+            .ToListAsync();
+
+        var imageIds = result.Models
+            .Select(x => x.Id);
+
+        var imageProperties = await DatabaseContext.ImageProperties
+            .AsNoTracking()
+            .Where(x => imageIds.Contains(x.ImageId) &&
+                        x.TagId == tagId &&
+                        x.IsActive)
+            .ToDictionaryAsync(
+            key => key.ImageId,
+            value => value.TagId);
+
+        foreach (var item in result.Models)
+        {
+            var model = item as EditImageModel;
+            model!.TagId = tagId;
+
+            if (imageProperties.ContainsKey(model!.Id))
+            {
+                model.IsActive = true;
+            }
+
+            try
+            {
+                BlobClient blob = new BlobClient(
+                       BlobConnectionString,
+                       ContainerName,
+                       item.Id.ToString());
+
+                var content = await blob.DownloadAsync();
+
+                using var memoryStream = new MemoryStream();
+
+                await content.Value.Content.CopyToAsync(memoryStream);
+
+                var bytes = memoryStream.ToArray();
+
+                var imageBase64Data = Convert.ToBase64String(bytes);
+
+                item.Image = string.Format("data:image/png;base64,{0}", imageBase64Data);
+                item.Image = item.Image.Replace("\r", "");
+                item.Image = item.Image.Replace("\n", "");
+            }
+            catch { }
+        }
+
+        return result;
     }
 }
