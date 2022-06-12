@@ -146,7 +146,7 @@ public class MediaController : CommonController
             {
                 var dto = request as EditTagsRequest;
                 dto!.TagsData = await _mediaService
-                .GetEditableTags(dto.Skip, dto.SearchPattern, dto.ImageId);
+                .GetEditableTags(dto.Skip, dto.SearchPattern, dto.ImageId ?? 0);
                 return View(dto);
             });
     }
@@ -183,7 +183,7 @@ public class MediaController : CommonController
             {
                 var dto = request as EditImagesRequest;
                 dto!.ImagesData = await _mediaService
-                .GetEditableImages(dto.Skip, dto.SearchPattern, dto.TagId);
+                .GetEditableImages(dto.Skip, dto.SearchPattern, dto.TagId ?? 0);
                 return View(dto);
             });
     }

@@ -2,5 +2,4 @@
 
 public class EditImagesRequest : ManageImagesRequest
 {
-    public int TagId { get; set; }
 }

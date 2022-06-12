@@ -1,6 +1,8 @@
 ﻿@model ISearchable
 
 <form method="get" action="@Model.Action">
+    <input type="hidden" asp-for="TagId" value="@Model.TagId">
+    <input type="hidden" asp-for="ImageId" value="@Model.ImageId">
     <div class="input-group mb-3 illustre-grayscale">
         <input type="text" class="form-control" asp-for="SearchPattern" placeholder="search" value="@Model.SearchPattern">
         <button type="submit" class="btn btn-outline-dark">Search</button>

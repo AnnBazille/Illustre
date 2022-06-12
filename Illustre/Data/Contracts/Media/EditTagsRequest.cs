@@ -2,5 +2,4 @@
 
 public class EditTagsRequest : ManageTagsRequest
 {
-    public int ImageId { get; set; }
 }

@@ -1,30 +1,19 @@
-﻿using Azure.Storage.Blobs;
-using Data.Contracts.Media;
+﻿using Data.Contracts.Media;
 using Data.Entities;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using System.Linq.Expressions;
 
 namespace Data.Repositories;
 
 public class MediaRepository : BaseRepository
 {
-    private const string ContainerName = "main-container";
-
-    private const string TempDirectory = "temp";
-
-    private readonly string BlobConnectionString;
+    private readonly BlogStorageHelper _blogStorageHelper;
 
     public MediaRepository(
         DatabaseContext databaseContext,
-        IConfiguration configuration) : base(databaseContext)
+        BlogStorageHelper blogStorageHelper) : base(databaseContext)
     {
-        BlobConnectionString = configuration.GetConnectionString("AzureBlobStorage");
-
-        if (!Directory.Exists(TempDirectory))
-        {
-            Directory.CreateDirectory(TempDirectory);
-        }
+        _blogStorageHelper = blogStorageHelper;
     }
 
     public async Task<ManageTagsModel> GetTags(int skip, string? search)
@@ -106,15 +95,33 @@ public class MediaRepository : BaseRepository
     {
         var result = new ManageImagesModel();
 
-        Expression<Func<Image, bool>> predicate = x => string.IsNullOrEmpty(search) ||
-                                                     x.Title.Contains(search);
+        Expression<Func<Tag, bool>> tagPredicate = x => !string.IsNullOrEmpty(search) &&
+                                                        x.Title.Contains(search);
+
+        var tagIds = await DatabaseContext.Tags
+            .AsNoTracking()
+            .Where(tagPredicate)
+            .Select(x => x.Id)
+            .ToListAsync();
+
+        var imageIds = await DatabaseContext.ImageProperties
+            .AsNoTracking()
+            .Where(x => tagIds.Contains(x.TagId))
+            .Select(x => x.ImageId)
+            .Distinct()
+            .ToListAsync();
+
+        Expression<Func<Image, bool>> imagePredicate = x => imageIds.Contains(x.Id) ||
+                                                            string.IsNullOrEmpty(search) ||
+                                                            x.Title.Contains(search);
 
         result.Total = await DatabaseContext.Images
             .AsNoTracking()
-            .CountAsync(predicate);
+            .CountAsync(imagePredicate);
+
         result.Models = await DatabaseContext.Images
             .AsNoTracking()
-            .Where(predicate)
+            .Where(imagePredicate)
             .OrderBy(x => x.Id)
             .Skip(skip)
             .Take(ConstantsHelper.PageSize)
@@ -130,24 +137,8 @@ public class MediaRepository : BaseRepository
         {
             try
             {
-                BlobClient blob = new BlobClient(
-                       BlobConnectionString,
-                       ContainerName,
-                       item.Id.ToString());
-
-                var content = await blob.DownloadAsync();
-
-                using var memoryStream = new MemoryStream();
-
-                await content.Value.Content.CopyToAsync(memoryStream);
-
-                var bytes = memoryStream.ToArray();
-
-                var imageBase64Data = Convert.ToBase64String(bytes);
-
-                item.Image = string.Format("data:image/png;base64,{0}", imageBase64Data);
-                item.Image = item.Image.Replace("\r", "");
-                item.Image = item.Image.Replace("\n", "");
+                item.Image = await _blogStorageHelper
+                    .DownloadImage(item.Id.ToString());
             }
             catch { }
         }
@@ -169,25 +160,8 @@ public class MediaRepository : BaseRepository
             await DatabaseContext.Images.AddAsync(image);
             await DatabaseContext.SaveChangesAsync();
 
-            BlobContainerClient blobContainerClient = new BlobContainerClient(
-                BlobConnectionString,
-                ContainerName);
-
-            await blobContainerClient.CreateIfNotExistsAsync();
-
-            BlobClient blob = blobContainerClient.GetBlobClient(image.Id.ToString());
-
-            var filename = TempDirectory + image.Id.ToString();
-
-            var stream = new FileStream(filename, FileMode.OpenOrCreate);
-
-            await request.File.CopyToAsync(stream);
-
-            stream.Close();
-
-            await blob.UploadAsync(filename);
-
-            File.Delete(filename);
+            await _blogStorageHelper
+                .UploadImage(image.Id.ToString(), request.File);
         }
         catch
         {
@@ -316,15 +290,32 @@ public class MediaRepository : BaseRepository
     {
         var result = new ManageImagesModel();
 
-        Expression<Func<Image, bool>> predicate = x => string.IsNullOrEmpty(search) ||
-                                                     x.Title.Contains(search);
+        Expression<Func<Tag, bool>> tagPredicate = x => !string.IsNullOrEmpty(search) &&
+                                                        x.Title.Contains(search);
+
+        var tagIds = await DatabaseContext.Tags
+            .AsNoTracking()
+            .Where(tagPredicate)
+            .Select(x => x.Id)
+            .ToListAsync();
+
+        var imageIds = await DatabaseContext.ImageProperties
+            .AsNoTracking()
+            .Where(x => tagIds.Contains(x.TagId))
+            .Select(x => x.ImageId)
+            .Distinct()
+            .ToListAsync();
+
+        Expression<Func<Image, bool>> imagePredicate = x => imageIds.Contains(x.Id) ||
+                                                            string.IsNullOrEmpty(search) ||
+                                                            x.Title.Contains(search);
 
         result.Total = await DatabaseContext.Images
             .AsNoTracking()
-            .CountAsync(predicate);
+            .CountAsync(imagePredicate);
         result.Models = await DatabaseContext.Images
             .AsNoTracking()
-            .Where(predicate)
+            .Where(imagePredicate)
             .OrderBy(x => x.Id)
             .Skip(skip)
             .Take(ConstantsHelper.PageSize)
@@ -336,12 +327,13 @@ public class MediaRepository : BaseRepository
             })
             .ToListAsync();
 
-        var imageIds = result.Models
-            .Select(x => x.Id);
+        var resultImageIds = result.Models
+            .Select(x => x.Id)
+            .ToList();
 
         var imageProperties = await DatabaseContext.ImageProperties
             .AsNoTracking()
-            .Where(x => imageIds.Contains(x.ImageId) &&
+            .Where(x => resultImageIds.Contains(x.ImageId) &&
                         x.TagId == tagId &&
                         x.IsActive)
             .ToDictionaryAsync(
@@ -360,24 +352,8 @@ public class MediaRepository : BaseRepository
 
             try
             {
-                BlobClient blob = new BlobClient(
-                       BlobConnectionString,
-                       ContainerName,
-                       item.Id.ToString());
-
-                var content = await blob.DownloadAsync();
-
-                using var memoryStream = new MemoryStream();
-
-                await content.Value.Content.CopyToAsync(memoryStream);
-
-                var bytes = memoryStream.ToArray();
-
-                var imageBase64Data = Convert.ToBase64String(bytes);
-
-                item.Image = string.Format("data:image/png;base64,{0}", imageBase64Data);
-                item.Image = item.Image.Replace("\r", "");
-                item.Image = item.Image.Replace("\n", "");
+                item.Image = await _blogStorageHelper
+                    .DownloadImage(item.Id.ToString());
             }
             catch { }
         }
