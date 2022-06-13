@@ -39,7 +39,7 @@ public class MediaRepository : BaseRepository
             .AsNoTracking()
             .Where(predicate)
             .OrderByDescending(x => x.IsActive)
-            .ThenBy(x => x.Id)
+            .ThenByDescending(x => x.Id)
             .Skip(skip)
             .Take(ConstantsHelper.PageSize)
             .Select(x => new ManageTagModel()
@@ -142,7 +142,7 @@ public class MediaRepository : BaseRepository
             .AsNoTracking()
             .Where(imagePredicate)
             .OrderByDescending(x => x.IsActive)
-            .ThenBy(x => x.Id)
+            .ThenByDescending(x => x.Id)
             .Skip(skip)
             .Take(ConstantsHelper.PageSize)
             .Select(x => new ManageImageModel()
@@ -241,7 +241,7 @@ public class MediaRepository : BaseRepository
             .AsNoTracking()
             .Where(predicate)
             .OrderByDescending(x => x.IsActive)
-            .ThenBy(x => x.Id)
+            .ThenByDescending(x => x.Id)
             .Select(x => x.Id)
             .ToListAsync();
 
@@ -359,7 +359,7 @@ public class MediaRepository : BaseRepository
             .AsNoTracking()
             .Where(imagePredicate)
             .OrderByDescending(x => x.IsActive)
-            .ThenBy(x => x.Id)
+            .ThenByDescending(x => x.Id)
             .Select(x => x.Id)
             .ToListAsync();
 

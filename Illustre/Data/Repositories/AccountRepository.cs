@@ -155,7 +155,7 @@ public class AccountRepository : BaseRepository
             .AsNoTracking()
             .Where(predicate)
             .OrderByDescending(x => x.IsActive)
-            .ThenBy(x => x.Id)
+            .ThenByDescending(x => x.Id)
             .Skip(skip)
             .Take(ConstantsHelper.PageSize)
             .Select(x => new ManageAccountModel()

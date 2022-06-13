@@ -13,11 +13,6 @@
 <div class="illustre-form illustre-grayscale">
     @{
         @await Html.PartialAsync("~/Views/Shared/_ErrorMessage.cshtml", Model)
-
-        if (Model.AccountsData is not null)
-        {
-            @await Html.PartialAsync("~/Views/Shared/_Selected.cshtml", Model.AccountsData)
-        }
         
         @await Html.PartialAsync("~/Views/Shared/_Search.cshtml", Model)
         
@@ -33,6 +28,8 @@
             {
                 @await Html.PartialAsync("~/Views/Account/Partial/_UpdateAccountById.cshtml", accountItem)
             }
+
+            @await Html.PartialAsync("~/Views/Shared/_Selected.cshtml", Model.AccountsData)
         }
     }
 </div>

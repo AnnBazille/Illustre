@@ -14,11 +14,6 @@
     @{
         @await Html.PartialAsync("~/Views/Shared/_ErrorMessage.cshtml", Model)
 
-        if (Model.ImagesData is not null)
-        {
-            @await Html.PartialAsync("~/Views/Shared/_Selected.cshtml", Model.ImagesData)
-        }
-
         @await Html.PartialAsync("~/Views/Shared/_Search.cshtml", Model)
         
         if (Model.ImagesData is not null)
@@ -27,6 +22,8 @@
             {
                 @await Html.PartialAsync("~/Views/Media/Partial/_EditImageById.cshtml", imageItem)
             }
+
+            @await Html.PartialAsync("~/Views/Shared/_Selected.cshtml", Model.ImagesData)
         }
     }
 </div>
