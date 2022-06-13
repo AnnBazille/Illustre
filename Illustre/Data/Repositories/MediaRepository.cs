@@ -7,13 +7,13 @@ namespace Data.Repositories;
 
 public class MediaRepository : BaseRepository
 {
-    private readonly BlogStorageHelper _blogStorageHelper;
+    private readonly BlobStorageHelper _blobStorageHelper;
 
     public MediaRepository(
         DatabaseContext databaseContext,
-        BlogStorageHelper blogStorageHelper) : base(databaseContext)
+        BlobStorageHelper blobStorageHelper) : base(databaseContext)
     {
-        _blogStorageHelper = blogStorageHelper;
+        _blobStorageHelper = blobStorageHelper;
     }
 
     public async Task<ManageTagsModel> GetTags(int skip, string? search)
@@ -26,10 +26,20 @@ public class MediaRepository : BaseRepository
         result.Total = await DatabaseContext.Tags
             .AsNoTracking()
             .CountAsync(predicate);
+
+        Expression<Func<Tag, bool>> predicateSelected = x => (string.IsNullOrEmpty(search) ||
+                                                             x.Title.Contains(search)) &&
+                                                             x.IsActive;
+
+        result.Selected = await DatabaseContext.Tags
+            .AsNoTracking()
+            .CountAsync(predicateSelected);
+
         result.Models = await DatabaseContext.Tags
             .AsNoTracking()
             .Where(predicate)
-            .OrderBy(x => x.Id)
+            .OrderByDescending(x => x.IsActive)
+            .ThenBy(x => x.Id)
             .Skip(skip)
             .Take(ConstantsHelper.PageSize)
             .Select(x => new ManageTagModel()
@@ -119,10 +129,20 @@ public class MediaRepository : BaseRepository
             .AsNoTracking()
             .CountAsync(imagePredicate);
 
+        Expression<Func<Image, bool>> imagePredicateSelected = x => (imageIds.Contains(x.Id) ||
+                                                                    string.IsNullOrEmpty(search) ||
+                                                                    x.Title.Contains(search)) &&
+                                                                    x.IsActive;
+
+        result.Selected = await DatabaseContext.Images
+            .AsNoTracking()
+            .CountAsync(imagePredicateSelected);
+
         result.Models = await DatabaseContext.Images
             .AsNoTracking()
             .Where(imagePredicate)
-            .OrderBy(x => x.Id)
+            .OrderByDescending(x => x.IsActive)
+            .ThenBy(x => x.Id)
             .Skip(skip)
             .Take(ConstantsHelper.PageSize)
             .Select(x => new ManageImageModel()
@@ -137,7 +157,7 @@ public class MediaRepository : BaseRepository
         {
             try
             {
-                item.Image = await _blogStorageHelper
+                item.Image = await _blobStorageHelper
                     .DownloadImage(item.Id.ToString());
             }
             catch { }
@@ -160,7 +180,7 @@ public class MediaRepository : BaseRepository
             await DatabaseContext.Images.AddAsync(image);
             await DatabaseContext.SaveChangesAsync();
 
-            await _blogStorageHelper
+            await _blobStorageHelper
                 .UploadImage(image.Id.ToString(), request.File);
         }
         catch
@@ -203,48 +223,62 @@ public class MediaRepository : BaseRepository
     {
         var result = new ManageTagsModel();
 
-        Expression<Func<Tag, bool>> predicate = x => string.IsNullOrEmpty(search) ||
-                                                     x.Title.Contains(search);
-
-        result.Total = await DatabaseContext.Tags
+        var activeIds = await DatabaseContext.ImageProperties
             .AsNoTracking()
-            .CountAsync(predicate);
-        result.Models = await DatabaseContext.Tags
+            .Where(x => x.ImageId == imageId &&
+                        x.IsActive)
+            .OrderByDescending(x => x.Id)
+            .Select(x => x.TagId)
+            .ToListAsync();
+
+        result.Selected = activeIds.Count;
+
+        Expression<Func<Tag, bool>> predicate = x => (string.IsNullOrEmpty(search) ||
+                                                     x.Title.Contains(search)) &&
+                                                     !activeIds.Contains(x.Id);
+
+        var allIds = await DatabaseContext.Tags
             .AsNoTracking()
             .Where(predicate)
-            .OrderBy(x => x.Id)
+            .OrderByDescending(x => x.IsActive)
+            .ThenBy(x => x.Id)
+            .Select(x => x.Id)
+            .ToListAsync();
+
+        allIds.InsertRange(0, activeIds);
+
+        result.Total = allIds.Count();
+
+        var resultIds = allIds
             .Skip(skip)
-            .Take(ConstantsHelper.PageSize)
+            .Take(ConstantsHelper.PageSize);
+
+        var models = await DatabaseContext.Tags
+            .AsNoTracking()
+            .Where(x => resultIds.Contains(x.Id))
             .Select(x => new EditTagModel()
             {
                 Id = x.Id,
                 Title = x.Title,
-                IsActive = false,
             })
-            .ToListAsync();
-
-        var tagIds = result.Models
-            .Select(x => x.Id);
-
-        var imageProperties = await DatabaseContext.ImageProperties
-            .AsNoTracking()
-            .Where(x => tagIds.Contains(x.TagId) &&
-                        x.ImageId == imageId &&
-                        x.IsActive)
             .ToDictionaryAsync(
-            key => key.TagId,
-            value => value.ImageId);
+            key => key.Id,
+            value => value);
 
-        foreach (var item in result.Models)
+        foreach (var item in activeIds)
         {
-            var model = item as EditTagModel;
-            model!.ImageId = imageId;
-
-            if (imageProperties.ContainsKey(model!.Id))
-            {
-                model.IsActive = true;
-            }
+            models[item].IsActive = true;
+            models[item].ImageId = imageId;
         }
+
+        var resultModels = new List<ManageTagModel>();
+
+        foreach (var item in resultIds)
+        {
+            resultModels.Add(models[item]);
+        }
+
+        result.Models = resultModels;
 
         return result;
     }
@@ -290,6 +324,16 @@ public class MediaRepository : BaseRepository
     {
         var result = new ManageImagesModel();
 
+        var activeIds = await DatabaseContext.ImageProperties
+            .AsNoTracking()
+            .Where(x => x.TagId == tagId &&
+                        x.IsActive)
+            .OrderByDescending(x => x.Id)
+            .Select(x => x.ImageId)
+            .ToListAsync();
+
+        result.Selected = activeIds.Count;
+
         Expression<Func<Tag, bool>> tagPredicate = x => !string.IsNullOrEmpty(search) &&
                                                         x.Title.Contains(search);
 
@@ -306,57 +350,59 @@ public class MediaRepository : BaseRepository
             .Distinct()
             .ToListAsync();
 
-        Expression<Func<Image, bool>> imagePredicate = x => imageIds.Contains(x.Id) ||
+        Expression<Func<Image, bool>> imagePredicate = x => (imageIds.Contains(x.Id) ||
                                                             string.IsNullOrEmpty(search) ||
-                                                            x.Title.Contains(search);
+                                                            x.Title.Contains(search)) &&
+                                                            !activeIds.Contains(x.Id);
 
-        result.Total = await DatabaseContext.Images
-            .AsNoTracking()
-            .CountAsync(imagePredicate);
-        result.Models = await DatabaseContext.Images
+        var allIds = await DatabaseContext.Images
             .AsNoTracking()
             .Where(imagePredicate)
-            .OrderBy(x => x.Id)
+            .OrderByDescending(x => x.IsActive)
+            .ThenBy(x => x.Id)
+            .Select(x => x.Id)
+            .ToListAsync();
+
+        allIds.InsertRange(0, activeIds);
+
+        result.Total = allIds.Count();
+
+        var resultIds = allIds
             .Skip(skip)
-            .Take(ConstantsHelper.PageSize)
+            .Take(ConstantsHelper.PageSize);
+
+        var models = await DatabaseContext.Images
+            .AsNoTracking()
+            .Where(x => resultIds.Contains(x.Id))
             .Select(x => new EditImageModel()
             {
                 Id = x.Id,
                 Title = x.Title,
-                IsActive = false,
             })
-            .ToListAsync();
-
-        var resultImageIds = result.Models
-            .Select(x => x.Id)
-            .ToList();
-
-        var imageProperties = await DatabaseContext.ImageProperties
-            .AsNoTracking()
-            .Where(x => resultImageIds.Contains(x.ImageId) &&
-                        x.TagId == tagId &&
-                        x.IsActive)
             .ToDictionaryAsync(
-            key => key.ImageId,
-            value => value.TagId);
+            key => key.Id,
+            value => value);
 
-        foreach (var item in result.Models)
+        foreach (var item in activeIds)
         {
-            var model = item as EditImageModel;
-            model!.TagId = tagId;
-
-            if (imageProperties.ContainsKey(model!.Id))
-            {
-                model.IsActive = true;
-            }
-
+            models[item].IsActive = true;
+            models[item].TagId = tagId;
             try
             {
-                item.Image = await _blogStorageHelper
-                    .DownloadImage(item.Id.ToString());
+                models[item].Image = await _blobStorageHelper
+                    .DownloadImage(item.ToString());
             }
             catch { }
         }
+
+        var resultModels = new List<ManageImageModel>();
+
+        foreach (var item in resultIds)
+        {
+            resultModels.Add(models[item]);
+        }
+
+        result.Models = resultModels;
 
         return result;
     }

@@ -15,7 +15,7 @@ builder.Services.AddDbContext<DatabaseContext>(options =>
         builder.Configuration.GetConnectionString("DatabaseContext"),
         o => o.EnableRetryOnFailure()));
 
-builder.Services.AddScoped<BlogStorageHelper>();
+builder.Services.AddScoped<BlobStorageHelper>();
 
 builder.Services.AddScoped<AccountRepository>();
 builder.Services.AddScoped<MediaRepository>();

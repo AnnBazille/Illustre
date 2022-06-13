@@ -4,7 +4,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace Data;
 
-public class BlogStorageHelper
+public class BlobStorageHelper
 {
     private const string ContainerName = "main-container";
 
@@ -12,7 +12,7 @@ public class BlogStorageHelper
 
     private readonly string _blobConnectionString;
 
-    public BlogStorageHelper(IConfiguration configuration)
+    public BlobStorageHelper(IConfiguration configuration)
     {
         _blobConnectionString = configuration.GetConnectionString("AzureBlobStorage");
     }

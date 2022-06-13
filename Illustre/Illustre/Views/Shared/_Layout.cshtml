@@ -12,7 +12,7 @@
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow" id="illustre-navbar">
             <div class="container-fluid">
                 <a class="navbar-brand" asp-area="" asp-controller="Account" asp-action="Index">Illustre</a>
                 <div class="d-flex">
@@ -50,7 +50,7 @@
                 HttpContextAccessor.HttpContext is not null &&
                !HttpContextAccessor.HttpContext.Request.Cookies.TryGetValue(ConstantsHelper.AcceptCookie, out var acceptCookie))
             {
-                <div class="container illustre-form">
+                <div class="illustre-form">
                     <div class="row g-1">
                         <div class="col-12">
                             <div class="alert alert-light alert-dismissible fade show" role="alert">
@@ -70,7 +70,7 @@
         }
     </header>
     <div class="container">
-        <main role="main" class="pb-3">
+        <main role="main">
             @RenderBody()
         </main>
     </div>

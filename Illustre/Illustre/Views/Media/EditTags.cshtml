@@ -14,6 +14,11 @@
     @{
         @await Html.PartialAsync("~/Views/Shared/_ErrorMessage.cshtml", Model)
 
+        if (Model.TagsData is not null)
+        {
+            @await Html.PartialAsync("~/Views/Shared/_Selected.cshtml", Model.TagsData)
+        }
+
         @await Html.PartialAsync("~/Views/Shared/_Search.cshtml", Model)
         
         @await Html.PartialAsync("~/Views/Media/Partial/_AddTag.cshtml",

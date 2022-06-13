@@ -1,8 +1,12 @@
-﻿namespace Data.Contracts.Media;
+﻿using Data.Contracts.Common;
 
-public class ManageTagsModel
+namespace Data.Contracts.Media;
+
+public class ManageTagsModel : IManageEntitiesModel
 {
     public IEnumerable<ManageTagModel> Models { get; set; }
 
     public int Total { get; set; }
+
+    public int Selected { get; set; }
 }

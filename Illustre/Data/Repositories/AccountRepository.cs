@@ -133,17 +133,29 @@ public class AccountRepository : BaseRepository
         var result = new ManageAccountsModel();
 
         Expression<Func<Account, bool>> predicate = x => x.Role == role &&
-                                                        (string.IsNullOrEmpty(search) ||
+                                                         (string.IsNullOrEmpty(search) ||
                                                          x.Email.Contains(search) ||
                                                          x.Username.Contains(search));
 
         result.Total = await DatabaseContext.Accounts
             .AsNoTracking()
             .CountAsync(predicate);
+
+        Expression<Func<Account, bool>> predicateSelected = x => x.Role == role &&
+                                                                 (string.IsNullOrEmpty(search) ||
+                                                                 x.Email.Contains(search) ||
+                                                                 x.Username.Contains(search)) &&
+                                                                 x.IsActive;
+
+        result.Selected = await DatabaseContext.Accounts
+            .AsNoTracking()
+            .CountAsync(predicateSelected);
+
         result.Models = await DatabaseContext.Accounts
             .AsNoTracking()
             .Where(predicate)
-            .OrderBy(x => x.Id)
+            .OrderByDescending(x => x.IsActive)
+            .ThenBy(x => x.Id)
             .Skip(skip)
             .Take(ConstantsHelper.PageSize)
             .Select(x => new ManageAccountModel()

@@ -210,6 +210,12 @@ public class MediaController : CommonController
             });
     }
 
+    [HttpGet]
+    public async Task<IActionResult> Show()
+    {
+        return View();
+    }
+
     private string GetManageTagsRedirect(string isFirstAttempt)
     {
         return $"/Media/ManageTags?isFirstAttempt={isFirstAttempt}";
