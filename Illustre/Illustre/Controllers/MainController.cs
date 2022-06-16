@@ -6,7 +6,15 @@ namespace Illustre.Controllers;
 
 public class MainController : CommonController
 {
-    public MainController(AccountService accountService) : base(accountService) { }
+    private readonly MediaService _mediaService;
+
+    public MainController(
+        AccountService accountService,
+        MediaService mediaService)
+        : base(accountService)
+    {
+        _mediaService = mediaService;
+    }
 
     [HttpGet]
     public async Task<IActionResult> SuperAdminMenu()

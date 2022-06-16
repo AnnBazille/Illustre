@@ -211,9 +211,16 @@ public class MediaController : CommonController
     }
 
     [HttpGet]
-    public async Task<IActionResult> Show()
+    public async Task<IActionResult> Show(ShowImageModel model)
     {
-        return View();
+        return await Execute(
+            new Role[] { Role.User },
+            model,
+            async (model) =>
+            {
+                return View(model);
+            });
+        //Response.Redirect(Request.UrlReferrer.ToString());
     }
 
     private string GetManageTagsRedirect(string isFirstAttempt)
@@ -228,11 +235,13 @@ public class MediaController : CommonController
 
     private string GetEditTagsRedirect(string isFirstAttempt, int imageId)
     {
-        return $"/Media/EditTags?isFirstAttempt={isFirstAttempt}&imageId=" + imageId;
+        return $"/Media/EditTags?isFirstAttempt={isFirstAttempt}&imageId="
+               + imageId;
     }
 
     private string GetEditImagesRedirect(string isFirstAttempt, int tagId)
     {
-        return $"/Media/EditImages?isFirstAttempt={isFirstAttempt}&tagId=" + tagId;
+        return $"/Media/EditImages?isFirstAttempt={isFirstAttempt}&tagId="
+               + tagId;
     }
 }

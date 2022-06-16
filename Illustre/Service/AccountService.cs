@@ -57,4 +57,9 @@ public class AccountService
     {
         return await _accountRepository.TryUpdateAccountById(model);
     }
+
+    public async Task<int?> TryGetAccountIdBySessionGuid(string sessionGuid)
+    {
+        return await _accountRepository.TryGetAccountIdBySessionGuid(sessionGuid);
+    }
 }

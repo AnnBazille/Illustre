@@ -56,9 +56,27 @@ main {
     display: inline-block;
 }
 
+#illustre-show-image {
+    background-position: center;
+    background-size: cover;
+}
+
+#illustre-show-image-blurred {
+    backdrop-filter: blur(1.5rem);
+    width: 100%;
+    height: 100%;
+}
+
+#illustre-illustration {
+    background-position: center;
+    background-size: contain;
+    background-repeat: no-repeat;
+    width: 100%;
+    height: 100%;
+}
+
 @media (orientation:landscape) {
-    #illustre-show-image,
-    .illustre-side-form {
+    #illustre-show-image, .illustre-side-form {
         width: 50%;
         max-height: 100%;
         min-height: 100%;
@@ -79,6 +97,7 @@ main {
     .illustre-side-form {
         max-width: 100%;
         min-width: 100%;
+        height: 100vh;
     }
 }
 
@@ -157,4 +176,50 @@ main {
 
 .illustre-half-width {
     width: 50%;
+}
+
+.illustre-icon {
+    width: 2rem;
+    height: 2rem;
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+#illustre-like,
+#illustre-like.illustre-disliked,
+#illustre-like.illustre-liked:hover,
+#illustre-like.illustre-liked:active {
+    background-image: url(../icons/like-empty.svg);
+}
+
+#illustre-like:hover,
+#illustre-like:active,
+#illustre-like.illustre-liked {
+    background-image: url(../icons/like-fill.svg);
+}
+
+#illustre-dislike,
+#illustre-dislike.illustre-liked,
+#illustre-dislike.illustre-disliked:hover,
+#illustre-dislike.illustre-disliked:active {
+    background-image: url(../icons/dislike-empty.svg);
+}
+
+#illustre-dislike:hover,
+#illustre-dislike:active,
+#illustre-dislike.illustre-disliked {
+    background-image: url(../icons/dislike-fill.svg);
+}
+
+#illustre-next {
+    background-image: url(../icons/next-empty.svg);
+}
+
+#illustre-next:hover,
+#illustre-next:active {
+    background-image: url(../icons/next-fill.svg);
+}
+
+.illustre-tag-list {
+    height: 250px;
 }

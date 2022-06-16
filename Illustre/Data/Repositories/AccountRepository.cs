@@ -234,6 +234,14 @@ public class AccountRepository : BaseRepository
         }
     }
 
+    public async Task<int?> TryGetAccountIdBySessionGuid(string sessionGuid)
+    {
+        return (await DatabaseContext.Accounts
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.SessionGuid == sessionGuid))
+            ?.Id;
+    }
+
     private Account CreateAccount(
         string email,
         string password,

@@ -61,4 +61,9 @@ public class MediaService
     {
         return await _mediaRepository.TryAddImageProperty(model.TagId, model.Id, model.IsActive);
     }
+
+    public async Task<ShowImageModel> GetNextImage(int userId)
+    {
+        return await _mediaRepository.GetNextImage(userId);
+    }
 }

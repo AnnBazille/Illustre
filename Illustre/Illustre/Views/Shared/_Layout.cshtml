@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Illustre.styles.css" asp-append-version="true" />
+    <link rel="icon" href="~/icons/next-fill.svg" />
 </head>
 <body>
     <header>
@@ -16,6 +17,7 @@
             <div class="container-fluid">
                 <a class="navbar-brand" asp-area="" asp-controller="Account" asp-action="Index">Illustre</a>
                 <div class="d-flex">
+                    <a class="btn btn-primary" data-bs-toggle="offcanvas" href="#offcanvasExample" role="button" aria-controls="offcanvasExample">Link with href</a>
                     <a class="illustre-grayscale illustre-navbar-text" href="mailto:superadmin@example.com">Contact Support</a>
                     @{
                         if (HttpContextAccessor is not null &&
@@ -45,6 +47,27 @@
                 </div>
             </div>
         </nav>
+<div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title" id="offcanvasExampleLabel">Offcanvas</h5>
+    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body">
+    <div>
+      Some text as placeholder. In real life you can have the elements you have chosen. Like, text, images, lists, etc.
+    </div>
+    <div class="dropdown mt-3">
+      <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown">
+        Dropdown button
+      </button>
+      <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+        <li><a class="dropdown-item" href="#">Action</a></li>
+        <li><a class="dropdown-item" href="#">Another action</a></li>
+        <li><a class="dropdown-item" href="#">Something else here</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
         @{
             if (HttpContextAccessor is not null &&
                 HttpContextAccessor.HttpContext is not null &&
