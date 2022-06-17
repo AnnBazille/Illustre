@@ -260,6 +260,7 @@ public class MediaRepository : BaseRepository
             {
                 Id = x.Id,
                 Title = x.Title,
+                ImageId = imageId,
             })
             .ToDictionaryAsync(
             key => key.Id,
@@ -267,15 +268,20 @@ public class MediaRepository : BaseRepository
 
         foreach (var item in activeIds)
         {
-            models[item].IsActive = true;
-            models[item].ImageId = imageId;
+            if (models.ContainsKey(item))
+            {
+                models[item].IsActive = true;
+            } 
         }
 
         var resultModels = new List<ManageTagModel>();
 
         foreach (var item in resultIds)
         {
-            resultModels.Add(models[item]);
+            if (models.ContainsKey(item))
+            {
+                resultModels.Add(models[item]);
+            }
         }
 
         result.Models = resultModels;
@@ -390,12 +396,19 @@ public class MediaRepository : BaseRepository
 
         foreach (var item in activeIds)
         {
-            models[item].IsActive = true;
-            models[item].TagId = tagId;
+            if (models.ContainsKey(item))
+            {
+                models[item].IsActive = true;
+                models[item].TagId = tagId;
+            }
+        }
+
+        foreach (var item in models)
+        {
             try
             {
-                models[item].Image = await _blobStorageHelper
-                    .DownloadImage(item.ToString());
+                item.Value.Image = await _blobStorageHelper
+                .DownloadImage(item.Value.Id.ToString());
             }
             catch { }
         }
@@ -404,7 +417,10 @@ public class MediaRepository : BaseRepository
 
         foreach (var item in resultIds)
         {
-            resultModels.Add(models[item]);
+            if (models.ContainsKey(item))
+            {
+                resultModels.Add(models[item]);
+            }
         }
 
         result.Models = resultModels;
@@ -501,6 +517,38 @@ public class MediaRepository : BaseRepository
             .FirstOrDefaultAsync();
 
         return await CreateShowImageModel(imageId);
+    }
+
+    public async Task SetReaction(int userId, int imageId, bool isLiked)
+    {
+        var reaction = await DatabaseContext.Reactions
+            .FirstOrDefaultAsync(x => x.ImageId == imageId &&
+                                      x.AccountId == userId);
+
+        var isNew = false;
+
+        if (reaction is null)
+        {
+            isNew = true;
+            reaction = new Reaction()
+            {
+                AccountId = userId,
+                ImageId = imageId,
+            };
+        }
+
+        reaction.IsLiked = isLiked;
+
+        try
+        {
+            if (isNew)
+            {
+                await DatabaseContext.Reactions.AddAsync(reaction);
+            }
+
+            await DatabaseContext.SaveChangesAsync();
+        }
+        catch { }
     }
 
     private async Task<ShowImageModel> CreateShowImageModel(int? imageId = null)

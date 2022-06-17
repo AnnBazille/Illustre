@@ -43,7 +43,13 @@
     public async Task RenderButton(string active, int skip, int number)
     {
         <li class="page-item @active">
-            <a class="page-link" asp-controller="@Model.AspController" asp-action="@Model.AspAction" asp-route-skip="@skip">@number</a>
+            <a class="page-link"
+               asp-controller="@Model.Controller"
+               asp-action="@Model.Action"
+               asp-route-skip="@skip"
+               asp-route-imageId="@Model.ImageId"
+               asp-route-tagId="@Model.TagId"
+               asp-route-searchPattern="@Model.SearchPattern">@number</a>
         </li>
     }
 

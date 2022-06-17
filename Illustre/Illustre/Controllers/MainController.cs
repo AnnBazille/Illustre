@@ -6,15 +6,9 @@ namespace Illustre.Controllers;
 
 public class MainController : CommonController
 {
-    private readonly MediaService _mediaService;
-
     public MainController(
-        AccountService accountService,
-        MediaService mediaService)
-        : base(accountService)
-    {
-        _mediaService = mediaService;
-    }
+        AccountService accountService)
+        : base(accountService) { }
 
     [HttpGet]
     public async Task<IActionResult> SuperAdminMenu()
@@ -48,7 +42,7 @@ public class MainController : CommonController
             NoParameters,
             async (NoParameters) =>
             {
-                return View();
+                return Redirect("/Media/GetNextImage");
             });
     }
 }

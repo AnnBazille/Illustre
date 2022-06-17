@@ -40,21 +40,21 @@
             <div class="row g-1 mt-3">
                 <div class="col-4 d-grid">
                     <center>
-                        <a href="#">
+                        <a asp-controller="Media" asp-action="SetReaction" asp-route-imageId="@Model.ImageId" asp-route-isLiked="true">
                             <div class="illustre-icon @activeReaction" id="illustre-like"></div>
                         </a>
                     </center>
                 </div>
                 <div class="col-4 d-grid">
                     <center>
-                        <a href="#">
+                        <a asp-controller="Media" asp-action="GetNextImage">
                             <div class="illustre-icon @activeReaction" id="illustre-next"></div>
                         </a>
                     </center>
                 </div>
                 <div class="col-4 d-grid">
                     <center>
-                        <a href="#">
+                        <a asp-controller="Media" asp-action="SetReaction" asp-route-imageId="@Model.ImageId" asp-route-isLiked="false">
                             <div class="illustre-icon @activeReaction" id="illustre-dislike"></div>
                         </a>
                     </center>

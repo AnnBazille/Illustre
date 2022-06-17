@@ -1,12 +1,20 @@
-﻿namespace Illustre.Models;
+﻿using Data.Contracts.Common;
 
-public class PaginationModel
+namespace Illustre.Models;
+
+public class PaginationModel : ISearchable
 {
     public int? Total { get; set; }
 
     public int Skip { get; set; }
 
-    public string AspController { get; set; }
+    public int? ImageId { get; set; }
 
-    public string AspAction { get; set; }
+    public int? TagId { get; set; }
+
+    public string? SearchPattern { get; set; }
+
+    public string Controller { get; set; }
+
+    public string? Action { get; set; }
 }

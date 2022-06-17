@@ -9,4 +9,6 @@ public class AddTagRequest : FailableRequest
     public string Title { get; set; }
 
     public string? Action { get; set; }
+
+    public int? ImageId { get; set; }
 }

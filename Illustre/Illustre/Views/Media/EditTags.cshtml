@@ -20,6 +20,7 @@
                                  new AddTagRequest()
                                  {
                                      Action = Model!.Action,
+                                     ImageId = Model.ImageId,
                                  })
         
         if (Model.TagsData is not null)
@@ -39,6 +40,8 @@
                          {
                              Total = Model.TagsData?.Total,
                              Skip = Model.Skip,
-                             AspController = "Media",
-                             AspAction = "EditTags",
+                             SearchPattern = Model.SearchPattern,
+                             Controller = "Media",
+                             Action = "EditTags",
+                             ImageId = Model.ImageId,
                          })

@@ -66,4 +66,10 @@ public class MediaService
     {
         return await _mediaRepository.GetNextImage(userId);
     }
+
+    public async Task SetReaction(SetReactionModel model)
+    {
+        await _mediaRepository
+            .SetReaction(model.UserId, model.ImageId, model.IsLiked);
+    }
 }

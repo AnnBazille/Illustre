@@ -51,6 +51,11 @@ public class MediaController : CommonController
 
                 var redirect = dto!.Action + $"?isFirstAttempt={result}";
 
+                if (dto.ImageId is not null)
+                {
+                    redirect += $"&imageId={dto.ImageId}";
+                }
+
                 return Redirect(redirect);
             });
     }
@@ -221,6 +226,62 @@ public class MediaController : CommonController
                 return View(model);
             });
         //Response.Redirect(Request.UrlReferrer.ToString());
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetNextImage()
+    {
+        return await Execute(
+            new Role[] { Role.User },
+            NoParameters,
+            async (NoParameters) =>
+            {
+                var array = NoParameters as object[];
+                var cookie = array[CookieIndex] as string;
+                var userId = await _accountService
+                    .TryGetAccountIdBySessionGuid(cookie);
+
+                if (userId is not null)
+                {
+                    var image = await _mediaService.GetNextImage(userId!.Value);
+                    return View("Show", image);
+                }
+                else
+                {
+                    return RedirectToAction("Account", "Account");
+                }
+            },
+            true);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> SetReaction(SetReactionModel model)
+    {
+        return await Execute(
+            new Role[] { Role.User },
+            model,
+            async (model) =>
+            {
+                var array = model as object[];
+                var cookie = array[CookieIndex] as string;
+                var dto = array[DtoIndex] as SetReactionModel;
+                var userId = await _accountService
+                    .TryGetAccountIdBySessionGuid(cookie);
+
+                if (userId is not null)
+                {
+                    dto!.UserId = userId!.Value;
+
+                    await _mediaService.SetReaction(dto);
+
+                    return RedirectToAction("GetNextImage", "Media");
+                }
+                else
+                {
+                    return RedirectToAction("Account", "Account");
+                }
+            },
+            true);
     }
 
     private string GetManageTagsRedirect(string isFirstAttempt)
