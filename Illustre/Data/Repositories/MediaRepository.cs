@@ -398,13 +398,13 @@ public class MediaRepository : BaseRepository
         {
             if (models.ContainsKey(item))
             {
-                models[item].IsActive = true;
-                models[item].TagId = tagId;
+                models[item].IsActive = true;    
             }
         }
 
         foreach (var item in models)
         {
+            item.Value.TagId = tagId;
             try
             {
                 item.Value.Image = _blobStorageHelper

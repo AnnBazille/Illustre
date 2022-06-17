@@ -17,33 +17,6 @@ public class BlobStorageHelper
         _blobConnectionString = configuration.GetConnectionString("AzureBlobStorage");
     }
 
-    /*public async Task<string> DownloadImage(string filename)
-    {
-        BlobClient blob = new BlobClient(
-                       _blobConnectionString,
-                       ContainerName,
-                       filename);
-
-        var content = await blob.DownloadAsync();
-
-        using var memoryStream = new MemoryStream();
-
-        await content.Value.Content.CopyToAsync(memoryStream);
-
-        var bytes = memoryStream.ToArray();
-
-        var imageBase64Data = Convert.ToBase64String(bytes);
-
-        var result = string.Format("data:image/png;base64,{0}", imageBase64Data);
-
-        result.Replace("\r\n", "");
-        result.Replace("\n", "");
-
-        var test = DownloadImageV2(filename);
-
-        return result;
-    }*/
-
     public string DownloadImage(string filename)
     {
         BlobClient blob = new BlobClient(

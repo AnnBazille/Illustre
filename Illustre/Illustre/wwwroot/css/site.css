@@ -223,3 +223,7 @@ main {
 .illustre-tag-list {
     height: 250px;
 }
+
+.modal-dialog {
+    max-width: 100%;
+}
