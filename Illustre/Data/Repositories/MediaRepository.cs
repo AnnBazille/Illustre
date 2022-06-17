@@ -157,7 +157,7 @@ public class MediaRepository : BaseRepository
         {
             try
             {
-                item.Image = await _blobStorageHelper
+                item.Image = _blobStorageHelper
                     .DownloadImage(item.Id.ToString());
             }
             catch { }
@@ -407,7 +407,7 @@ public class MediaRepository : BaseRepository
         {
             try
             {
-                item.Value.Image = await _blobStorageHelper
+                item.Value.Image = _blobStorageHelper
                 .DownloadImage(item.Value.Id.ToString());
             }
             catch { }
@@ -594,7 +594,7 @@ public class MediaRepository : BaseRepository
             })
             .ToListAsync();
 
-        result.Image = await _blobStorageHelper
+        result.Image = _blobStorageHelper
             .DownloadImage(result.ImageId.ToString());
 
         return result;

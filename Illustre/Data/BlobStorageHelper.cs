@@ -17,7 +17,7 @@ public class BlobStorageHelper
         _blobConnectionString = configuration.GetConnectionString("AzureBlobStorage");
     }
 
-    public async Task<string> DownloadImage(string filename)
+    /*public async Task<string> DownloadImage(string filename)
     {
         BlobClient blob = new BlobClient(
                        _blobConnectionString,
@@ -39,7 +39,19 @@ public class BlobStorageHelper
         result.Replace("\r\n", "");
         result.Replace("\n", "");
 
+        var test = DownloadImageV2(filename);
+
         return result;
+    }*/
+
+    public string DownloadImage(string filename)
+    {
+        BlobClient blob = new BlobClient(
+                       _blobConnectionString,
+                       ContainerName,
+                       filename);
+
+        return blob.Uri.AbsoluteUri;
     }
 
     public async Task UploadImage(string filename, IFormFile file)
