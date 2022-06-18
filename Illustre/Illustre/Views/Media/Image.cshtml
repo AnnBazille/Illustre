@@ -21,18 +21,17 @@
 <div id="illustre-show-image-container">
     <div id="illustre-show-image" style='background-image:url("@Model.Image");'>
         <div id="illustre-show-image-blurred">
-            <div id="illustre-illustration" style='background-image:url("@Model.Image");'></div>
+            <div id="illustre-illustration"
+                 style='background-image:url("@Model.Image");'>
+             </div>
         </div>
     </div>
     <div class="illustre-side-form illustre-grayscale">
         <div class="illustre-form">
             <div class="mt-3">
-                <form method="get" action="">
-                    <div class="input-group mb-3 illustre-grayscale">
-                        <input type="text" class="form-control" placeholder="search">
-                        <button type="submit" class="btn btn-outline-dark">Search</button>
-                    </div>
-                </form>
+                @await Html.PartialAsync(
+                    "~/Views/Media/Partial/_SearchImage.cshtml",
+                    new SearchModel())
             </div>
             <div class="mt-3">
                 <h1 class="display-6">@Model.Title</h1>
@@ -40,22 +39,34 @@
             <div class="row g-1 mt-3">
                 <div class="col-4 d-grid">
                     <center>
-                        <a asp-controller="Media" asp-action="SetReaction" asp-route-imageId="@Model.ImageId" asp-route-isLiked="true">
-                            <div class="illustre-icon @activeReaction" id="illustre-like"></div>
+                        <a asp-controller="Media"
+                           asp-action="SetReaction"
+                           asp-route-imageId="@Model.ImageId"
+                           asp-route-isLiked="true">
+                            <div class="illustre-icon @activeReaction"
+                                 id="illustre-like">
+                            </div>
                         </a>
                     </center>
                 </div>
                 <div class="col-4 d-grid">
                     <center>
                         <a asp-controller="Media" asp-action="Image">
-                            <div class="illustre-icon @activeReaction" id="illustre-next"></div>
+                            <div class="illustre-icon @activeReaction"
+                                 id="illustre-next">
+                            </div>
                         </a>
                     </center>
                 </div>
                 <div class="col-4 d-grid">
                     <center>
-                        <a asp-controller="Media" asp-action="SetReaction" asp-route-imageId="@Model.ImageId" asp-route-isLiked="false">
-                            <div class="illustre-icon @activeReaction" id="illustre-dislike"></div>
+                        <a asp-controller="Media"
+                           asp-action="SetReaction"
+                           asp-route-imageId="@Model.ImageId"
+                           asp-route-isLiked="false">
+                            <div class="illustre-icon @activeReaction"
+                                 id="illustre-dislike">
+                            </div>
                         </a>
                     </center>
                 </div>
@@ -65,7 +76,12 @@
                     @{
                         foreach (var item in Model.Tags)
                         {
-                            <a href="#" class="list-group-item list-group-item-action">@item.Title</a>
+                            <a asp-controller="Media"
+                               asp-action="Search"
+                               asp-route-tagId="@item.Id"
+                               class="list-group-item list-group-item-action">
+                                @item.Title
+                            </a>
                         }
                     }
                 </div>

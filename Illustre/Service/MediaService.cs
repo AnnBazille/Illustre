@@ -83,4 +83,9 @@ public class MediaService
             model.Skip,
             model.IsLiked);
     }
+
+    public async Task<ShowImageModel> GetImage(int imageId)
+    {
+        return await _mediaRepository.CreateShowImageModel(imageId);
+    }
 }

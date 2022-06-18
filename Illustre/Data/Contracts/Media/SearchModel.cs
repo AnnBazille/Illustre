@@ -1,10 +1,13 @@
-﻿namespace Data.Contracts.Media;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Data.Contracts.Media;
 
 public class SearchModel
 {
     public int UserId { get; set; }
 
-    public string? SearchPattern { get; set; }
+    [Required]
+    public string SearchPattern { get; set; }
 
     public int? TagId { get; set; }
 

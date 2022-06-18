@@ -242,6 +242,22 @@ public class MediaController : CommonController
     }
 
     [HttpGet]
+    public async Task<IActionResult> GetImage(int imageId)
+    {
+        return await Execute(
+            new Role[] { Role.User },
+            imageId,
+            async (imageId) =>
+            {
+                var dto = (int)imageId;
+
+                var result = await _mediaService.GetImage(dto);
+
+                return View("Image", result);
+            });
+    }
+
+    [HttpGet]
     public async Task<IActionResult> SetReaction(SetReactionModel model)
     {
         return await Execute(
@@ -290,6 +306,8 @@ public class MediaController : CommonController
                     dto!.UserId = userId!.Value;
 
                     var result = await _mediaService.GetImagePreviews(dto);
+
+                    result.SearchModel = dto;
 
                     return View(result);
                 }

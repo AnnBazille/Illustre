@@ -1,0 +1,35 @@
+﻿@model PreviewImagesModel
+
+@{
+    ViewData["Title"] = "Search";
+}
+
+<div class="illustre-form illustre-grayscale">
+    @await Html.PartialAsync(
+                    "~/Views/Media/Partial/_SearchImage.cshtml",
+                    new SearchModel()
+                    {
+                        TagId = @Model.SearchModel.TagId,
+                        IsLiked = @Model.SearchModel.IsLiked,
+                    })
+</div>
+<div id="illustre-show-image-container">
+    @{
+        foreach (var item in Model.Images)
+        {
+            @await Html.PartialAsync("~/Views/Media/Partial/_Preview.cshtml",
+                                    item)
+        }
+    }
+</div>
+
+@await Html.PartialAsync("~/Views/Shared/_Pagination.cshtml",
+                         new PaginationModel()
+                         {
+                             Total = Model.Total,
+                             Skip = Model.SearchModel.Skip,
+                             SearchPattern = Model.SearchModel.SearchPattern,
+                             Controller = "Media",
+                             Action = "Search",
+                             TagId = Model.SearchModel.TagId,
+                         })

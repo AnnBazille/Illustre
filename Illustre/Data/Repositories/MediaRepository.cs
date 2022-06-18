@@ -643,15 +643,14 @@ public class MediaRepository : BaseRepository
 
     public async Task<PreviewImagesModel> GetImagePreviews(
         int userId,
-        string? searchPattern,
+        string searchPattern,
         int? tagId,
         int skip,
         bool? isLiked)
     {
         var result = new PreviewImagesModel();
 
-        if (searchPattern is not null &&
-            tagId is null &&
+        if (tagId is null &&
             isLiked is null)
         {
             Expression<Func<Tag, bool>> tagPredicate = x =>
@@ -966,7 +965,7 @@ public class MediaRepository : BaseRepository
         return result;
     }
 
-    private async Task<ShowImageModel> CreateShowImageModel(int? imageId = null)
+    public async Task<ShowImageModel> CreateShowImageModel(int? imageId = null)
     {
         ShowImageModel result;
 

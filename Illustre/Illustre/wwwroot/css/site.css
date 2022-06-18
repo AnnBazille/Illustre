@@ -49,6 +49,7 @@ main {
     flex-grow: 1 !important;
     flex-shrink: 1 !important;
     flex-basis: auto !important;
+    justify-content: space-evenly;
 }
 
 #illustre-show-image,
@@ -226,4 +227,19 @@ main {
 
 .modal-dialog {
     max-width: 100%;
+}
+
+.card {
+    width: 20rem;
+    height: 30rem;
+}
+
+.card img {
+    height: 20rem;
+    object-fit: cover;
+}
+
+.card-body {
+    margin-left: auto;
+    margin-right: auto;
 }
