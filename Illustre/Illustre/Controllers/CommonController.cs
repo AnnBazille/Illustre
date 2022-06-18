@@ -31,7 +31,8 @@ public abstract class CommonController : Controller
 
     protected async Task<IActionResult?> TryRedirect()
     {
-        if (Request.Cookies.TryGetValue(ConstantsHelper.SessionCookie, out var cookie))
+        if (Request.Cookies
+                .TryGetValue(ConstantsHelper.SessionCookie, out var cookie))
         {
             var role = await _accountService.TryGetRoleBySessionGuid(cookie!);
             if (role != null)
@@ -105,14 +106,15 @@ public abstract class CommonController : Controller
         Func<object, Task<IActionResult>> action,
         bool injectCookie = false)
     {
-        if (Request.Cookies.TryGetValue(ConstantsHelper.SessionCookie, out var cookie) &&
-            await CheckRoles(allowedRoles, cookie))
+        if (Request.Cookies
+                .TryGetValue(ConstantsHelper.SessionCookie, out var cookie) &&
+            await CheckRoles(allowedRoles, cookie!))
         {
             var parameter = dto;
 
             if (injectCookie)
             {
-                var array = new object[] { dto, cookie };
+                var array = new object[] { dto, cookie! };
                 parameter = array;
             }
 

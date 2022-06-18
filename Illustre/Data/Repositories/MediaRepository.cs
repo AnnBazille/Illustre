@@ -9,6 +9,13 @@ public class MediaRepository : BaseRepository
 {
     private readonly BlobStorageHelper _blobStorageHelper;
 
+    public class TagRating
+    {
+        public int TagId { get; set; }
+
+        public int Rating { get; set; }
+    }
+
     public MediaRepository(
         DatabaseContext databaseContext,
         BlobStorageHelper blobStorageHelper) : base(databaseContext)
@@ -20,16 +27,18 @@ public class MediaRepository : BaseRepository
     {
         var result = new ManageTagsModel();
 
-        Expression<Func<Tag, bool>> predicate = x => string.IsNullOrEmpty(search) ||
-                                                     x.Title.Contains(search);
+        Expression<Func<Tag, bool>> predicate = x =>
+            string.IsNullOrEmpty(search) ||
+            x.Title.Contains(search);
 
         result.Total = await DatabaseContext.Tags
             .AsNoTracking()
             .CountAsync(predicate);
 
-        Expression<Func<Tag, bool>> predicateSelected = x => (string.IsNullOrEmpty(search) ||
-                                                             x.Title.Contains(search)) &&
-                                                             x.IsActive;
+        Expression<Func<Tag, bool>> predicateSelected = x =>
+            (string.IsNullOrEmpty(search) ||
+            x.Title.Contains(search)) &&
+            x.IsActive;
 
         result.Selected = await DatabaseContext.Tags
             .AsNoTracking()
@@ -105,8 +114,9 @@ public class MediaRepository : BaseRepository
     {
         var result = new ManageImagesModel();
 
-        Expression<Func<Tag, bool>> tagPredicate = x => !string.IsNullOrEmpty(search) &&
-                                                        x.Title.Contains(search);
+        Expression<Func<Tag, bool>> tagPredicate = x =>
+            !string.IsNullOrEmpty(search) &&
+            x.Title.Contains(search);
 
         var tagIds = await DatabaseContext.Tags
             .AsNoTracking()
@@ -121,18 +131,20 @@ public class MediaRepository : BaseRepository
             .Distinct()
             .ToListAsync();
 
-        Expression<Func<Image, bool>> imagePredicate = x => imageIds.Contains(x.Id) ||
-                                                            string.IsNullOrEmpty(search) ||
-                                                            x.Title.Contains(search);
+        Expression<Func<Image, bool>> imagePredicate = x =>
+            imageIds.Contains(x.Id) ||
+            string.IsNullOrEmpty(search) ||
+            x.Title.Contains(search);
 
         result.Total = await DatabaseContext.Images
             .AsNoTracking()
             .CountAsync(imagePredicate);
 
-        Expression<Func<Image, bool>> imagePredicateSelected = x => (imageIds.Contains(x.Id) ||
-                                                                    string.IsNullOrEmpty(search) ||
-                                                                    x.Title.Contains(search)) &&
-                                                                    x.IsActive;
+        Expression<Func<Image, bool>> imagePredicateSelected = x =>
+            (imageIds.Contains(x.Id) ||
+            string.IsNullOrEmpty(search) ||
+            x.Title.Contains(search)) &&
+            x.IsActive;
 
         result.Selected = await DatabaseContext.Images
             .AsNoTracking()
@@ -219,7 +231,10 @@ public class MediaRepository : BaseRepository
         }
     }
 
-    public async Task<ManageTagsModel> GetEditableTags(int skip, string? search, int imageId)
+    public async Task<ManageTagsModel> GetEditableTags(
+        int skip,
+        string? search,
+        int imageId)
     {
         var result = new ManageTagsModel();
 
@@ -233,9 +248,10 @@ public class MediaRepository : BaseRepository
 
         result.Selected = activeIds.Count;
 
-        Expression<Func<Tag, bool>> predicate = x => (string.IsNullOrEmpty(search) ||
-                                                     x.Title.Contains(search)) &&
-                                                     !activeIds.Contains(x.Id);
+        Expression<Func<Tag, bool>> predicate = x =>
+            (string.IsNullOrEmpty(search) ||
+            x.Title.Contains(search)) &&
+            !activeIds.Contains(x.Id);
 
         var allIds = await DatabaseContext.Tags
             .AsNoTracking()
@@ -289,7 +305,10 @@ public class MediaRepository : BaseRepository
         return result;
     }
 
-    public async Task<bool> TryAddImageProperty(int tagId, int imageId, bool isActive)
+    public async Task<bool> TryAddImageProperty(
+        int tagId,
+        int imageId,
+        bool isActive)
     {
         var imageProperty = await DatabaseContext.ImageProperties
             .FirstOrDefaultAsync(x => x.TagId == tagId &&
@@ -430,93 +449,156 @@ public class MediaRepository : BaseRepository
 
     public async Task<ShowImageModel> GetNextImage(int userId)
     {
-        var reactions = await DatabaseContext.Reactions
-            .Where(x => x.AccountId == userId && x.IsActive)
-            .OrderBy(x => Guid.NewGuid())
-            .Take(10)
-            .Select(x => new
-            {
-                ImageId = x.ImageId,
-                IsLiked = x.IsLiked,
-            })
-            .ToListAsync();
+        const int maxReactionsCount = 100;
 
-        if (reactions.Count == 0)
-        {
-            return await CreateShowImageModel();
-        }
-
-        var imageIds = reactions.Select(x => x.ImageId).ToList();
-
-        var imageProperties = await DatabaseContext.ImageProperties
+        var randomReactions = await DatabaseContext.Reactions
+            .AsNoTracking()
             .Where(x => x.IsActive &&
-                        imageIds.Contains(x.ImageId))
-            .Select(x => new
-            {
-                ImageId = x.ImageId,
-                TagId = x.TagId
-            })
+                        x.AccountId == userId)
+            .OrderBy(x => Guid.NewGuid())
+            .Take(maxReactionsCount)
             .ToListAsync();
 
-        var resultTagIds = imageProperties
-            .Select(x => x.TagId)
-            .Distinct()
+        var likedImages = randomReactions
+            .Where(x => x.IsLiked &&
+                        x.IsActive)
+            .Select(x => x.ImageId)
             .ToList();
 
-        var ratings = new Dictionary<int, int>();
+        var dislikedImages = randomReactions
+            .Where(x => !x.IsLiked &&
+                        x.IsActive)
+            .Select(x => x.ImageId)
+            .ToList();
 
-        foreach (var tag in resultTagIds)
+        var likedTags = await DatabaseContext.ImageProperties
+            .AsNoTracking()
+            .Join(
+            DatabaseContext.Tags,
+            property => property.TagId,
+            tag => tag.Id,
+            (property, tag) => new
+            {
+                TagId = tag.Id,
+                IsActiveTag = tag.IsActive,
+                IsActiveProperty = property.IsActive,
+                ImageId = property.ImageId,
+            })
+            .Where(x => x.IsActiveTag &&
+                        x.IsActiveProperty &&
+                        likedImages.Contains(x.ImageId))
+            .GroupBy(x => x.TagId)
+            .Select(x => new TagRating()
+            {
+                TagId = x.Key,
+                Rating = x.Count(),
+            })
+            .ToListAsync();
+
+        var dislikedTags = await DatabaseContext.ImageProperties
+            .AsNoTracking()
+            .Join(
+            DatabaseContext.Tags,
+            property => property.TagId,
+            tag => tag.Id,
+            (property, tag) => new
+            {
+                TagId = tag.Id,
+                IsActiveTag = tag.IsActive,
+                IsActiveProperty = property.IsActive,
+                ImageId = property.ImageId,
+            })
+            .Where(x => x.IsActiveTag &&
+                        x.IsActiveProperty &&
+                        dislikedImages.Contains(x.ImageId))
+            .GroupBy(x => x.TagId)
+            .Select(x => new TagRating()
+            {
+                TagId = x.Key,
+                Rating = x.Count(),
+            })
+            .ToListAsync();
+
+        /*var dislikedTags = await DatabaseContext.ImageProperties
+            .Where(x => x.IsActive &&
+                        dislikedImages.Contains(x.ImageId))
+            .GroupBy(x => x.TagId)
+            .Select(x => new TagRating()
+            {
+                TagId = x.Key,
+                Rating = x.Count(),
+            })
+            .ToListAsync();*/
+
+        var ratings = new List<TagRating>();
+
+        foreach (var tag in likedTags)
         {
-            var images = imageProperties
-                .Where(x => x.TagId == tag)
-                .Select(x => x.ImageId)
-                .ToList();
+            var dislikes = dislikedTags
+                .FirstOrDefault(x => x.TagId == tag.TagId)?.Rating ?? 0;
 
-            var tagReactions = reactions
-                .Where(x => images.Contains(x.ImageId))
-                .ToList();
+            tag.Rating -= dislikes;
 
-            var likes = tagReactions
-                .Count(x => x.IsLiked);
-
-            var dislikes = tagReactions.Count() - likes;
-
-            var tagRating = likes - dislikes;
-
-            ratings.TryAdd(tagRating, tag);
+            ratings.Add(tag);
         }
 
-        var topRating = ratings.Keys.Max();
+        ratings.RemoveAll(x => x.Rating < 0);
 
-        var topTag = ratings[topRating];
+        var result = ratings
+            .OrderByDescending(x => x.Rating)
+            .ThenBy(x => Guid.NewGuid());
 
-        var usedImageProperties = DatabaseContext.ImageProperties
-            .Join(DatabaseContext.Reactions,
-            property => property.ImageId,
-            reaction => reaction.ImageId,
-            (property, reaction) => new
+        foreach (var tag in result)
+        {
+            var seenImages = DatabaseContext.ImageProperties
+                .AsNoTracking()
+                .Join(
+                DatabaseContext.Reactions.AsNoTracking(),
+                property => property.ImageId,
+                reaction => reaction.ImageId,
+                (property, reaction) => new
+                {
+                    IsActiveProperty = property.IsActive,
+                    IsActiveReaction = reaction.IsActive,
+                    UserId = reaction.AccountId,
+                    TagId = property.TagId,
+                    ImageId = property.ImageId,
+                })
+                .Where(x => x.IsActiveReaction &&
+                            x.IsActiveProperty &&
+                            x.UserId == userId &&
+                            x.TagId == tag.TagId)
+                .Select(x => x.ImageId)
+                .Join(
+                DatabaseContext.Images.AsNoTracking(),
+                x => x,
+                image => image.Id,
+                (x, image) => new
+                {
+                    ImageId = image.Id,
+                    IsActive = image.IsActive,
+                })
+                .Where(x => x.IsActive)
+                .Select(x => x.ImageId);
+
+            var notSeenImages = DatabaseContext.Images
+                .Where(x => !seenImages.Contains(x.Id) &&
+                            x.IsActive);
+
+            var count = await notSeenImages.CountAsync();
+
+            if (count != 0)
             {
-                ImagePropertyId = property.Id,
-                IsActiveProperty = property.IsActive,
-                IsActiveReaction = reaction.IsActive,
-                TagId = property.TagId,
-                UserId = reaction.AccountId,
-            })
-            .Where(x => x.IsActiveReaction &&
-                        x.IsActiveProperty &&
-                        x.UserId == userId &&
-                        x.TagId == topTag)
-            .Select(x => x.ImagePropertyId);
+                var imageId = await notSeenImages
+                    .OrderBy(x => Guid.NewGuid())
+                    .Select(x => x.Id)
+                    .FirstAsync();
 
-        var imageId = await DatabaseContext.ImageProperties
-            .Where(x => x.IsActive &&
-                        x.TagId == topTag &&
-                        !usedImageProperties.Contains(x.Id))
-            .OrderByDescending(x => x.Id)
-            .Select(x => x.ImageId)
-            .FirstOrDefaultAsync();
+                return await CreateShowImageModel(imageId);
+            }
+        }
 
-        return await CreateShowImageModel(imageId);
+        return await CreateShowImageModel();
     }
 
     public async Task SetReaction(int userId, int imageId, bool isLiked)
@@ -534,10 +616,18 @@ public class MediaRepository : BaseRepository
             {
                 AccountId = userId,
                 ImageId = imageId,
+                IsLiked = isLiked,
             };
         }
-
-        reaction.IsLiked = isLiked;
+        else if (reaction.IsLiked != isLiked)
+        {
+            reaction.IsLiked = isLiked;
+            reaction.IsActive = true;
+        }
+        else
+        {
+            reaction.IsActive = !reaction.IsActive;
+        }
 
         try
         {
@@ -549,6 +639,331 @@ public class MediaRepository : BaseRepository
             await DatabaseContext.SaveChangesAsync();
         }
         catch { }
+    }
+
+    public async Task<PreviewImagesModel> GetImagePreviews(
+        int userId,
+        string? searchPattern,
+        int? tagId,
+        int skip,
+        bool? isLiked)
+    {
+        var result = new PreviewImagesModel();
+
+        if (searchPattern is not null &&
+            tagId is null &&
+            isLiked is null)
+        {
+            Expression<Func<Tag, bool>> tagPredicate = x =>
+                x.IsActive &&
+                !string.IsNullOrEmpty(searchPattern) &&
+                x.Title.Contains(searchPattern);
+
+            var tagIds = await DatabaseContext.Tags
+                .AsNoTracking()
+                .Where(tagPredicate)
+                .Select(x => x.Id)
+                .ToListAsync();
+
+            var imageIds = await DatabaseContext.ImageProperties
+                .AsNoTracking()
+                .Where(x => tagIds.Contains(x.TagId) &&
+                            x.IsActive)
+                .Select(x => x.ImageId)
+                .Distinct()
+                .ToListAsync();
+
+            Expression<Func<Image, bool>> imagePredicate = x =>
+                x.IsActive &&
+                (imageIds.Contains(x.Id) ||
+                (!string.IsNullOrEmpty(searchPattern) &&
+                x.Title.Contains(searchPattern)));
+
+            result.Total = await DatabaseContext.Images
+                .AsNoTracking()
+                .CountAsync(imagePredicate);
+
+            var images = await DatabaseContext.Images
+               .AsNoTracking()
+               .Where(imagePredicate)
+               .OrderByDescending(x => x.Id)
+               .Skip(skip)
+               .Select(x => new PreviewImageModel()
+               {
+                   ImageId = x.Id,
+                   Title = x.Title,
+               })
+               .Take(ConstantsHelper.PageSize)
+               .ToListAsync();
+
+            foreach (var image in images)
+            {
+                try
+                {
+                    image.Image = _blobStorageHelper
+                        .DownloadImage(image.ImageId.ToString());
+                }
+                catch { }
+            }
+
+            result.Images = images;
+        }
+        else if (tagId is not null &&
+                 isLiked is null)
+        {
+            Expression<Func<Tag, bool>> tagPredicate = x =>
+                x.IsActive &&
+                (x.Id == tagId ||
+                (!string.IsNullOrEmpty(searchPattern) &&
+                x.Title.Contains(searchPattern)));
+
+            var tagIds = await DatabaseContext.Tags
+                .AsNoTracking()
+                .Where(tagPredicate)
+                .Select(x => x.Id)
+                .ToListAsync();
+
+            var imageIds = await DatabaseContext.ImageProperties
+                .AsNoTracking()
+                .Where(x => tagIds.Contains(x.TagId) &&
+                            x.IsActive)
+                .Select(x => x.ImageId)
+                .Distinct()
+                .ToListAsync();
+
+            Expression<Func<Image, bool>> imagePredicate = x =>
+                x.IsActive &&
+                (imageIds.Contains(x.Id) ||
+                (!string.IsNullOrEmpty(searchPattern) &&
+                x.Title.Contains(searchPattern)));
+
+            result.Total = await DatabaseContext.Images
+                .AsNoTracking()
+                .CountAsync(imagePredicate);
+
+            var images = await DatabaseContext.Images
+               .AsNoTracking()
+               .Where(imagePredicate)
+               .OrderByDescending(x => x.Id)
+               .Skip(skip)
+               .Select(x => new PreviewImageModel()
+               {
+                   ImageId = x.Id,
+                   Title = x.Title,
+               })
+               .Take(ConstantsHelper.PageSize)
+               .ToListAsync();
+
+            foreach (var image in images)
+            {
+                try
+                {
+                    image.Image = _blobStorageHelper
+                        .DownloadImage(image.ImageId.ToString());
+                }
+                catch { }
+            }
+
+            result.Images = images;
+        }
+        else if (tagId is null &&
+                 isLiked is not null)
+        {
+            var reactedImagesIds = DatabaseContext.Reactions
+                .AsNoTracking()
+                .Where(x => x.IsActive &&
+                            x.IsLiked == isLiked &&
+                            x.AccountId == userId)
+                .Select(x => x.ImageId)
+                .Join(
+                DatabaseContext.Images,
+                x => x,
+                image => image.Id,
+                (x, image) => new
+                {
+                    ImageId = image.Id,
+                    IsActive = image.IsActive,
+                })
+                .Where(x => x.IsActive)
+                .Select(x => x.ImageId);
+
+            var tagIds = DatabaseContext.ImageProperties
+                .AsNoTracking()
+                .Where(x => x.IsActive &&
+                            reactedImagesIds.Contains(x.ImageId))
+                .Select(x => x.TagId)
+                .Join(
+                DatabaseContext.Tags,
+                x => x,
+                tag => tag.Id,
+                (x, tag) => new
+                {
+                    TagId = tag.Id,
+                    Title = tag.Title,
+                    IsActive = tag.IsActive,
+                })
+                .Where(x => x.IsActive &&
+                            !string.IsNullOrEmpty(searchPattern) &&
+                            x.Title.Contains(searchPattern))
+                .Select(x => x.TagId);
+
+            var foundImages = DatabaseContext.ImageProperties
+                .AsNoTracking()
+                .Where(x => x.IsActive &&
+                            tagIds.Contains(x.TagId))
+                .Select(x => x.ImageId)
+                .Join(
+                DatabaseContext.Images,
+                x => x,
+                image => image.Id,
+                (x, image) => new
+                {
+                    ImageId = image.Id,
+                    IsActive = image.IsActive,
+                })
+                .Where(x => x.IsActive)
+                .Select(x => x.ImageId)
+                .Join(
+                DatabaseContext.Reactions,
+                x => x,
+                reaction => reaction.ImageId,
+                (x, reaction) => new
+                {
+                    IsActive = reaction.IsActive,
+                    IsLiked = reaction.IsLiked,
+                    ImageId = reaction.ImageId,
+                })
+                .Where(x => x.IsActive &&
+                            x.IsLiked == isLiked)
+                .Select(x => x.ImageId);
+
+            var foundImagesCount = await foundImages.CountAsync();
+
+            if (foundImagesCount == 0)
+            {
+                foundImages = DatabaseContext.Reactions
+                    .AsNoTracking()
+                    .Join(
+                    DatabaseContext.Images,
+                    reaction => reaction.ImageId,
+                    image => image.Id,
+                    (reaction, image) => new
+                    {
+                        ImageId = image.Id,
+                        IsActiveReaction = reaction.IsActive,
+                        IsActiveImage = image.IsActive,
+                        IsLiked = reaction.IsLiked,
+                        Title = image.Title,
+                        UserId = reaction.AccountId,
+                    })
+                    .Where(x => x.IsActiveImage &&
+                                x.IsActiveReaction &&
+                                x.IsLiked == isLiked &&
+                                x.UserId == userId &&
+                                (string.IsNullOrEmpty(searchPattern) ||
+                                x.Title.Contains(searchPattern)))
+                    .Select(x => x.ImageId);
+            }
+
+            var images = await DatabaseContext.Images
+                .AsNoTracking()
+                .Where(x => foundImages.Contains(x.Id))
+                .OrderByDescending(x => x.Id)
+                .Skip(skip)
+                .Select(x => new PreviewImageModel()
+                {
+                    ImageId = x.Id,
+                    Title = x.Title,
+                })
+                .Take(ConstantsHelper.PageSize)
+                .ToListAsync();
+
+            foreach (var image in images)
+            {
+                try
+                {
+                    image.Image = _blobStorageHelper
+                        .DownloadImage(image.ImageId.ToString());
+                }
+                catch { }
+            }
+
+            result.Images = images;
+        }
+        else if (tagId is not null &&
+                 isLiked is not null)
+        {
+            var imageIds = DatabaseContext.Reactions
+                .AsNoTracking()
+                .Where(x => x.IsActive &&
+                            x.AccountId == userId &&
+                            x.IsLiked == isLiked)
+                .Select(x => x.ImageId)
+                .Join(
+                DatabaseContext.Images.AsNoTracking(),
+                x => x,
+                image => image.Id,
+                (x, image) => new
+                {
+                    IsActive = image.IsActive,
+                    ImageId = image.Id,
+                    Title = image.Title,
+                })
+                .Where(x => x.IsActive &&
+                            (string.IsNullOrEmpty(searchPattern) ||
+                            x.Title.Contains(searchPattern)))
+                .Select(x => x.ImageId)
+                .Join(
+                DatabaseContext.ImageProperties.AsNoTracking(),
+                x => x,
+                property => property.ImageId,
+                (x, property) => new
+                {
+                    ImageId = property.ImageId,
+                    TagId = property.TagId,
+                    IsActive = property.IsActive,
+                })
+                .Where(x => x.IsActive &&
+                            x.TagId == tagId)
+                .Join(
+                DatabaseContext.Tags.AsNoTracking(),
+                x => x.TagId,
+                tag => tag.Id,
+                (x, tag) => new
+                {
+                    ImageId = x.ImageId,
+                    IsActive = tag.IsActive,
+                })
+                .Where(x => x.IsActive)
+                .Select(x => x.ImageId);
+
+            var images = await DatabaseContext.Images
+                .AsNoTracking()
+                .Where(x => imageIds.Contains(x.Id))
+                .OrderByDescending(x => x.Id)
+                .Skip(skip)
+                .Select(x => new PreviewImageModel()
+                {
+                    ImageId = x.Id,
+                    Title = x.Title,
+                })
+                .Take(ConstantsHelper.PageSize)
+                .ToListAsync();
+
+            foreach (var image in images)
+            {
+                try
+                {
+                    image.Image = _blobStorageHelper
+                        .DownloadImage(image.ImageId.ToString());
+                }
+                catch { }
+            }
+
+            result.Images = images;
+        }
+
+        return result;
     }
 
     private async Task<ShowImageModel> CreateShowImageModel(int? imageId = null)

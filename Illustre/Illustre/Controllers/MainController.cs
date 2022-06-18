@@ -42,7 +42,7 @@ public class MainController : CommonController
             NoParameters,
             async (NoParameters) =>
             {
-                return Redirect("/Media/GetNextImage");
+                return Redirect("/Media/Image");
             });
     }
 }

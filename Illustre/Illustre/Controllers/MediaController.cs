@@ -174,7 +174,7 @@ public class MediaController : CommonController
                         .ToLower();
                 }
 
-                return Redirect(GetEditTagsRedirect(result, dto.ImageId));
+                return Redirect(GetEditTagsRedirect(result, dto!.ImageId));
             });
     }
 
@@ -211,25 +211,12 @@ public class MediaController : CommonController
                         .ToLower();
                 }
 
-                return Redirect(GetEditImagesRedirect(result, dto.TagId));
+                return Redirect(GetEditImagesRedirect(result, dto!.TagId));
             });
     }
 
     [HttpGet]
-    public async Task<IActionResult> Show(ShowImageModel model)
-    {
-        return await Execute(
-            new Role[] { Role.User },
-            model,
-            async (model) =>
-            {
-                return View(model);
-            });
-        //Response.Redirect(Request.UrlReferrer.ToString());
-    }
-
-    [HttpGet]
-    public async Task<IActionResult> GetNextImage()
+    public async Task<IActionResult> Image()
     {
         return await Execute(
             new Role[] { Role.User },
@@ -237,14 +224,14 @@ public class MediaController : CommonController
             async (NoParameters) =>
             {
                 var array = NoParameters as object[];
-                var cookie = array[CookieIndex] as string;
+                var cookie = array![CookieIndex] as string;
                 var userId = await _accountService
-                    .TryGetAccountIdBySessionGuid(cookie);
+                    .TryGetAccountIdBySessionGuid(cookie!);
 
                 if (userId is not null)
                 {
                     var image = await _mediaService.GetNextImage(userId!.Value);
-                    return View("Show", image);
+                    return View(image);
                 }
                 else
                 {
@@ -263,10 +250,10 @@ public class MediaController : CommonController
             async (model) =>
             {
                 var array = model as object[];
-                var cookie = array[CookieIndex] as string;
+                var cookie = array![CookieIndex] as string;
                 var dto = array[DtoIndex] as SetReactionModel;
                 var userId = await _accountService
-                    .TryGetAccountIdBySessionGuid(cookie);
+                    .TryGetAccountIdBySessionGuid(cookie!);
 
                 if (userId is not null)
                 {
@@ -274,7 +261,37 @@ public class MediaController : CommonController
 
                     await _mediaService.SetReaction(dto);
 
-                    return RedirectToAction("GetNextImage", "Media");
+                    return RedirectToAction("Image", "Media");
+                }
+                else
+                {
+                    return RedirectToAction("Account", "Account");
+                }
+            },
+            true);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Search(SearchModel model)
+    {
+        return await Execute(
+            new Role[] { Role.User },
+            model,
+            async (model) =>
+            {
+                var array = model as object[];
+                var cookie = array![CookieIndex] as string;
+                var dto = array[DtoIndex] as SearchModel;
+                var userId = await _accountService
+                    .TryGetAccountIdBySessionGuid(cookie!);
+
+                if (userId is not null)
+                {
+                    dto!.UserId = userId!.Value;
+
+                    var result = await _mediaService.GetImagePreviews(dto);
+
+                    return View(result);
                 }
                 else
                 {

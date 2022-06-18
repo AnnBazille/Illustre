@@ -72,4 +72,15 @@ public class MediaService
         await _mediaRepository
             .SetReaction(model.UserId, model.ImageId, model.IsLiked);
     }
+
+    public async Task<PreviewImagesModel> GetImagePreviews(
+        SearchModel model)
+    {
+        return await _mediaRepository.GetImagePreviews(
+            model.UserId,
+            model.SearchPattern,
+            model.TagId,
+            model.Skip,
+            model.IsLiked);
+    }
 }

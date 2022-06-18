@@ -12,7 +12,8 @@ public class AccountRepository : BaseRepository
     private const int TokenDaysLife = 1;
     private const int SaltSize = 16;
 
-    public AccountRepository(DatabaseContext databaseContext) : base(databaseContext) { }
+    public AccountRepository(DatabaseContext databaseContext)
+        : base(databaseContext) { }
 
     public async Task<Role?> TryGetRoleBySessionGuid(string sessionGuid)
     {
@@ -81,7 +82,9 @@ public class AccountRepository : BaseRepository
             .FirstOrDefaultAsync();
     }
 
-    public async Task<SignUpRequest?> TryUpdateAccount(string sessionGuid, UpdateAccountRequest request)
+    public async Task<SignUpRequest?> TryUpdateAccount(
+        string sessionGuid,
+        UpdateAccountRequest request)
     {
         var account = await DatabaseContext.Accounts
             .Where(x => x.SessionGuid != null &&
@@ -128,24 +131,29 @@ public class AccountRepository : BaseRepository
         };
     }
 
-    public async Task<ManageAccountsModel> GetAccounts(int skip, string? search, Role role)
+    public async Task<ManageAccountsModel> GetAccounts(
+        int skip,
+        string? search,
+        Role role)
     {
         var result = new ManageAccountsModel();
 
-        Expression<Func<Account, bool>> predicate = x => x.Role == role &&
-                                                         (string.IsNullOrEmpty(search) ||
-                                                         x.Email.Contains(search) ||
-                                                         x.Username.Contains(search));
+        Expression<Func<Account, bool>> predicate = x =>
+            x.Role == role &&
+            (string.IsNullOrEmpty(search) ||
+            x.Email.Contains(search) ||
+            x.Username.Contains(search));
 
         result.Total = await DatabaseContext.Accounts
             .AsNoTracking()
             .CountAsync(predicate);
 
-        Expression<Func<Account, bool>> predicateSelected = x => x.Role == role &&
-                                                                 (string.IsNullOrEmpty(search) ||
-                                                                 x.Email.Contains(search) ||
-                                                                 x.Username.Contains(search)) &&
-                                                                 x.IsActive;
+        Expression<Func<Account, bool>> predicateSelected = x =>
+            x.Role == role &&
+            (string.IsNullOrEmpty(search) ||
+            x.Email.Contains(search) ||
+            x.Username.Contains(search)) &&
+            x.IsActive;
 
         result.Selected = await DatabaseContext.Accounts
             .AsNoTracking()

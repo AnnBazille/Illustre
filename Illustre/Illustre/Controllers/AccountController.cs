@@ -10,7 +10,8 @@ namespace Illustre.Controllers;
 
 public class AccountController : CommonController
 {
-    public AccountController(AccountService accountService) : base(accountService) { }
+    public AccountController(AccountService accountService)
+        : base(accountService) { }
 
     [HttpGet]
     public async Task<IActionResult> Index(SignInRequest request)
@@ -122,9 +123,9 @@ public class AccountController : CommonController
             async (NoParameters) =>
             {
                 var array = NoParameters as object[];
-                var cookie = array[CookieIndex] as string;
+                var cookie = array![CookieIndex] as string;
 
-                var account = await _accountService.TryGetAccount(cookie);
+                var account = await _accountService.TryGetAccount(cookie!);
                 return View(account);
             },
             true);
@@ -139,10 +140,11 @@ public class AccountController : CommonController
             async (request) =>
             {
                 var array = request as object[];
-                var dto = array[DtoIndex] as UpdateAccountRequest;
+                var dto = array![DtoIndex] as UpdateAccountRequest;
                 var cookie = array[CookieIndex] as string;
 
-                var result = await _accountService.TryUpdateAccount(cookie, dto);
+                var result = await _accountService
+                    .TryUpdateAccount(cookie!, dto!);
 
                 if (result == null)
                 {
@@ -168,7 +170,8 @@ public class AccountController : CommonController
     }
 
     [HttpGet]
-    public async Task<IActionResult> ManageEditors(ManageAccountsRequest request)
+    public async Task<IActionResult> ManageEditors
+        (ManageAccountsRequest request)
     {
         return await Execute(
             new Role[] { Role.SuperAdmin },
@@ -207,7 +210,7 @@ public class AccountController : CommonController
             {
                 var dto = request as AddAccountRequest;
                 var result = false.ToString().ToLower();
-                var action = dto.Role == Role.Editor ?
+                var action = dto!.Role == Role.Editor ?
                              "ManageEditors" :
                              "ManageUsers";
 
@@ -232,7 +235,7 @@ public class AccountController : CommonController
             {
                 var dto = model as ManageAccountModel;
                 var result = false.ToString().ToLower();
-                var action = dto.Role == Role.Editor ?
+                var action = dto!.Role == Role.Editor ?
                              "ManageEditors" :
                              "ManageUsers";
 
@@ -245,11 +248,5 @@ public class AccountController : CommonController
                 
                 return Redirect($"/Account/{action}?isFirstAttempt={result}");
             });
-    }
-
-    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public IActionResult Error()
-    {
-        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
 }

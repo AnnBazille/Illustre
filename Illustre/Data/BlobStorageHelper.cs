@@ -14,7 +14,8 @@ public class BlobStorageHelper
 
     public BlobStorageHelper(IConfiguration configuration)
     {
-        _blobConnectionString = configuration.GetConnectionString("AzureBlobStorage");
+        _blobConnectionString = configuration
+            .GetConnectionString("AzureBlobStorage");
     }
 
     public string DownloadImage(string filename)
