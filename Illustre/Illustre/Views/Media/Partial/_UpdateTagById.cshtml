@@ -3,11 +3,30 @@
 <form method="post" action="/Media/UpdateTagById">
     <input type="hidden" asp-for="Id" value="@Model.Id">
     <div class="input-group mb-3">
-        <input type="text" class="form-control" asp-for="Title" placeholder="title" value="@Model.Title">
-        <a role="button" class="btn btn-dark" target="_blank" asp-controller="Media" asp-action="EditImages" asp-route-isFirstAttempt="true" asp-route-tagId="@Model.Id">Edit Images</a>
+        <input type="text"
+               class="form-control"
+               asp-for="Title"
+               placeholder="title"
+               value="@Model.Title">
+        <a role="button"
+           class="btn btn-dark"
+           target="_blank"
+           asp-controller="Media"
+           asp-action="EditImages"
+           asp-route-isFirstAttempt="true"
+           asp-route-tagId="@Model.Id">
+            Edit Images
+        </a>
         <div class="input-group-text">
-            <input type="checkbox" class="form-check-input mt-0" asp-for="IsActive" id="is-active-@Model.Id" checked="@Model.IsActive">
-            <label class="form-check-label illustre-checkbox-label" for="is-active-@Model.Id">Is Active</label>
+            <input type="checkbox"
+                   class="form-check-input mt-0"
+                   asp-for="IsActive"
+                   id="is-active-@Model.Id"
+                   checked="@Model.IsActive">
+            <label class="form-check-label illustre-checkbox-label"
+                   for="is-active-@Model.Id">
+                Is Active
+            </label>
         </div>
         <button type="submit" class="btn btn-outline-dark">Save</button>
     </div>

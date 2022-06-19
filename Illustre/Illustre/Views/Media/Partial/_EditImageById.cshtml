@@ -7,34 +7,68 @@
     <div class="container illustre-container mb-3">
         <div class="row illustre-row">
             <div class="col-3 illustre-col">
-                @await Html.PartialAsync("~/Views/Media/Partial/_ModalImagePreview.cshtml",
-                         new ModalImagePreviewModel()
-                         {
-                             ModalId = Model.Id.ToString(),
-                             Title = @Model.Title,
-                             Image = @Model.Image,
-                         })
+                @await Html.PartialAsync(
+                    "~/Views/Media/Partial/_ModalImagePreview.cshtml",
+                    new ModalImagePreviewModel()
+                    {
+                        ModalId = Model.Id.ToString(),
+                        Title = @Model.Title,
+                        Image = @Model.Image,
+                    })
             </div>
             <div class="col-7 illustre-col illustre-grayscale">
                 <div class="container illustre-container">
                     <div class="row illustre-row">
                         <div class="input-group illustre-input-group">
-                            <input type="text" class="form-control illustre-input-group-item-inside illustre-input-group-item-no-bottom-border" asp-for="Title" placeholder="title" value="@Model.Title" disabled>
+                            <input type="text"
+                                   class="form-control
+                                          illustre-input-group-item-inside
+                                     illustre-input-group-item-no-bottom-border"
+                                   asp-for="Title"
+                                   placeholder="title"
+                                   value="@Model.Title"
+                                   disabled>
                         </div>
                     </div>
                     <div class="row illustre-row">
                         <div class="input-group illustre-input-group">
-                            <a role="button" class="btn btn-dark illustre-input-group-item-inside illustre-half-width" target="_blank" asp-controller="Media" asp-action="EditTags" asp-route-isFirstAttempt="true" asp-route-imageId="@Model.Id">Edit Tags</a>
-                            <div class="input-group-text illustre-input-group-item-inside illustre-half-width">
-                                <input type="checkbox" class="form-check-input mt-0" asp-for="IsActive" id="is-active-@Model.Id" checked="@Model.IsActive">
-                                <label class="form-check-label illustre-checkbox-label" for="is-active-@Model.Id">Is Active</label>
+                            <a role="button"
+                               class="btn
+                                      btn-dark
+                                      illustre-input-group-item-inside
+                                      illustre-half-width"
+                               target="_blank"
+                               asp-controller="Media"
+                               asp-action="EditTags"
+                               asp-route-isFirstAttempt="true"
+                               asp-route-imageId="@Model.Id">
+                                Edit Tags
+                            </a>
+                            <div class="input-group-text
+                                        illustre-input-group-item-inside
+                                        illustre-half-width">
+                                <input type="checkbox"
+                                       class="form-check-input mt-0"
+                                       asp-for="IsActive"
+                                       id="is-active-@Model.Id"
+                                       checked="@Model.IsActive">
+                                <label class="form-check-label
+                                              illustre-checkbox-label"
+                                       for="is-active-@Model.Id">
+                                    Is Active
+                                </label>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="col-2 illustre-col illustre-grayscale">
-                <button type="submit" class="btn btn-outline-dark illustre-input-group-item-right">Save</button>
+                <button type="submit"
+                        class="btn
+                               btn-outline-dark
+                               illustre-input-group-item-right">
+                    Save
+                </button>
             </div>
         </div>
     </div>

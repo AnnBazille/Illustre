@@ -96,7 +96,10 @@
                pageNumber < currentPageNumber - offset;
     }
 
-    public bool IsInRightInterval(int pageNumber, int pages, int currentPageNumber)
+    public bool IsInRightInterval(
+        int pageNumber,
+        int pages,
+        int currentPageNumber)
     {
         const int offset = 2;
         const int next = 1;
@@ -105,7 +108,11 @@
                pageNumber > currentPageNumber + next;
     }
 
-    public bool IsOnlyOneInInterval(int leftBoundary, int rightBoundary, int currentValue, bool isLeftInterval)
+    public bool IsOnlyOneInInterval(
+        int leftBoundary,
+        int rightBoundary,
+        int currentValue, 
+        bool isLeftInterval)
     {
         const int offset = 2;
 
@@ -178,7 +185,8 @@
         @{
             if (Model!.Total is not null)
             {
-                // for pages #1-9 number buttons are shown without any three dots buttons in panel
+                // for pages #1-9 number buttons
+                // are shown without any three dots buttons in panel
                 var maxPageButtons = 9;
                 var pages = GetPagesCount();
                 var currentPageNumber = GetCurrentPageNumber();

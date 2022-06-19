@@ -3,9 +3,20 @@
 @{
     if (Model != null && !Model.IsFirstAttempt)
     {
-        <div class="col-12 alert alert-light alert-dismissible fade show illustre-grayscale" role="alert">
+        <div class="col-12
+                    alert
+                    alert-light
+                    alert-dismissible
+                    fade
+                    show
+                    illustre-grayscale"
+             role="alert">
             <span>@Model.ErrorMessage</span>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            <button type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert"
+                    aria-label="Close">
+            </button>
         </div>
         Model.IsFirstAttempt = true;
     }

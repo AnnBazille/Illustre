@@ -519,17 +519,6 @@ public class MediaRepository : BaseRepository
             })
             .ToListAsync();
 
-        /*var dislikedTags = await DatabaseContext.ImageProperties
-            .Where(x => x.IsActive &&
-                        dislikedImages.Contains(x.ImageId))
-            .GroupBy(x => x.TagId)
-            .Select(x => new TagRating()
-            {
-                TagId = x.Key,
-                Rating = x.Count(),
-            })
-            .ToListAsync();*/
-
         var ratings = new List<TagRating>();
 
         foreach (var tag in likedTags)

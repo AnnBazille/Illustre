@@ -5,7 +5,11 @@
     <input type="hidden" asp-for="TagId" value="@Model.TagId">
     <input type="hidden" asp-for="IsLiked" value="@Model.IsLiked">
     <div class="input-group mb-3 illustre-grayscale">
-        <input type="text" class="form-control" asp-for="SearchPattern" placeholder="search" value="@Model.SearchPattern">
+        <input type="text"
+               class="form-control"
+               asp-for="SearchPattern"
+               placeholder="search"
+               value="@Model.SearchPattern">
         <button type="submit" class="btn btn-outline-dark">Search</button>
     </div>
 </form>

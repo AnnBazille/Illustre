@@ -5,7 +5,8 @@
 
     if (Model is not null)
     {
-        Model.ErrorMessage = "An error occured while editing or creating an account.";
+        Model.ErrorMessage =
+        "An error occured while editing or creating an account.";
         Model.Action = "/Account/ManageEditors";
     }
 }
@@ -26,10 +27,13 @@
         {
             foreach (var accountItem in Model.AccountsData.Models)
             {
-                @await Html.PartialAsync("~/Views/Account/Partial/_UpdateAccountById.cshtml", accountItem)
+                @await Html.PartialAsync(
+                    "~/Views/Account/Partial/_UpdateAccountById.cshtml",
+                    accountItem)
             }
 
-            @await Html.PartialAsync("~/Views/Shared/_Selected.cshtml", Model.AccountsData)
+            @await Html.PartialAsync("~/Views/Shared/_Selected.cshtml",
+                                     Model.AccountsData)
         }
     }
 </div>

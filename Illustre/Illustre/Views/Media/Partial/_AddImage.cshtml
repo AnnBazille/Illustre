@@ -4,15 +4,24 @@
     <div class="container illustre-container mb-3">
         <div class="row illustre-row">
             <div class="col-3 illustre-col">
-                <div class="modal fade" id="illustre-add-image-modal" tabindex="-1" role="dialog">
-                    <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal fade"
+                     id="illustre-add-image-modal"
+                     tabindex="-1"
+                     role="dialog">
+                    <div class="modal-dialog modal-dialog-centered"
+                         role="document">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                                <button type="button"
+                                        class="btn-close"
+                                        data-bs-dismiss="modal"
+                                        aria-label="Close">
                                 </button>
                             </div>
                             <div class="modal-body">
-                                <img src="..." class="img-fluid mx-auto d-block" id="illustre-add-image-preview">
+                                <img src="..."
+                                     class="img-fluid mx-auto d-block"
+                                     id="illustre-add-image-preview">
                             </div>
                         </div>
                     </div>
@@ -30,18 +39,33 @@
                 <div class="container illustre-container">
                     <div class="row illustre-row">
                         <div class="input-group illustre-input-group">
-                            <input type="text" class="form-control illustre-input-group-item-inside illustre-input-group-item-no-bottom-border" asp-for="Title" placeholder="title" value="@Model.Title">
+                            <input type="text"
+                                   class="form-control
+                                          illustre-input-group-item-inside
+                                     illustre-input-group-item-no-bottom-border"
+                                   asp-for="Title"
+                                   placeholder="title"
+                                   value="@Model.Title">
                         </div>
                     </div>
                     <div class="row illustre-row">
                         <div class="input-group illustre-input-group">
-                            <input type="file" class="form-control illustre-input-group-item-inside" asp-for="@Model.File" id="illustre-image-file">
+                            <input type="file"
+                                   class="form-control
+                                          illustre-input-group-item-inside"
+                                   asp-for="@Model.File"
+                                   id="illustre-image-file">
                         </div>
                     </div>
                 </div>
             </div>
             <div class="col-2 illustre-col illustre-grayscale">
-                <button type="submit" class="btn btn-outline-dark illustre-input-group-item-right">Add Image</button>
+                <button type="submit"
+                        class="btn
+                               btn-outline-dark
+                               illustre-input-group-item-right">
+                    Add Image
+                </button>
             </div>
         </div>
     </div>

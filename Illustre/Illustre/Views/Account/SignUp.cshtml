@@ -14,16 +14,30 @@
         <div class="row g-1">
             @await Html.PartialAsync("~/Views/Shared/_ErrorMessage.cshtml", Model)
             <div class="col-12">
-                <input type="email" class="form-control" id="email" placeholder="email" asp-for="Email"/>
+                <input type="email"
+                       class="form-control"
+                       id="email"
+                       placeholder="email"
+                       asp-for="Email"/>
             </div>
             <div class="col-12">
-                <input type="text" class="form-control" id="username" placeholder="username" asp-for="Username"/>
+                <input type="text"
+                       class="form-control"
+                       id="username"
+                       placeholder="username"
+                       asp-for="Username"/>
             </div>
             <div class="col-12">
-                <input type="password" class="form-control" id="password" placeholder="password" asp-for="Password"/>
+                <input type="password"
+                       class="form-control"
+                       id="password"
+                       placeholder="password"
+                       asp-for="Password"/>
             </div>
             <div class="col-12 d-grid">
-                <button type="submit" class="btn btn-outline-dark">Sign Up</button>
+                <button type="submit" class="btn btn-outline-dark">
+                    Sign Up
+                </button>
             </div>
         </div>
     </div>

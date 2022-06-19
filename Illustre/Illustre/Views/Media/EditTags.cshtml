@@ -5,7 +5,8 @@
 
     if (Model is not null)
     {
-        Model.ErrorMessage = "An error occured while editing or creating a tag.";
+        Model.ErrorMessage =
+        "An error occured while editing or creating a tag.";
         Model.Action = "/Media/EditTags";
     }
 }
@@ -27,10 +28,13 @@
         {
             foreach (var tagItem in Model.TagsData.Models)
             {
-                @await Html.PartialAsync("~/Views/Media/Partial/_EditTagById.cshtml", tagItem)
+                @await Html.PartialAsync(
+                    "~/Views/Media/Partial/_EditTagById.cshtml",
+                    tagItem)
             }
 
-            @await Html.PartialAsync("~/Views/Shared/_Selected.cshtml", Model.TagsData)
+            @await Html.PartialAsync("~/Views/Shared/_Selected.cshtml",
+                                     Model.TagsData)
         }
     }
 </div>

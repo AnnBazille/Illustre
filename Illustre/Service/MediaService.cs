@@ -42,24 +42,32 @@ public class MediaService
         return await _mediaRepository.TryUpdateImageById(model);
     }
 
-    public async Task<ManageTagsModel> GetEditableTags(int skip, string? search, int imageId)
+    public async Task<ManageTagsModel> GetEditableTags(
+        int skip,
+        string? search,
+        int imageId)
     {
         return await _mediaRepository.GetEditableTags(skip, search, imageId);
     }
 
     public async Task<bool> TryEditTagById(EditTagModel model)
     {
-        return await _mediaRepository.TryAddImageProperty(model.Id, model.ImageId, model.IsActive);
+        return await _mediaRepository
+            .TryAddImageProperty(model.Id, model.ImageId, model.IsActive);
     }
 
-    public async Task<ManageImagesModel> GetEditableImages(int skip, string? search, int tagId)
+    public async Task<ManageImagesModel> GetEditableImages(
+        int skip,
+        string? search,
+        int tagId)
     {
         return await _mediaRepository.GetEditableImages(skip, search, tagId);
     }
 
     public async Task<bool> TryEditImageById(EditImageModel model)
     {
-        return await _mediaRepository.TryAddImageProperty(model.TagId, model.Id, model.IsActive);
+        return await _mediaRepository
+            .TryAddImageProperty(model.TagId, model.Id, model.IsActive);
     }
 
     public async Task<ShowImageModel> GetNextImage(int userId)

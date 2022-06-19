@@ -12,15 +12,28 @@
 <form method="post" action="/Account/SignIn">
     <div class="illustre-form illustre-grayscale">
         <div class="row g-1">
-            @await Html.PartialAsync("~/Views/Shared/_ErrorMessage.cshtml", Model)
+            @await Html.PartialAsync("~/Views/Shared/_ErrorMessage.cshtml",
+                                     Model)
             <div class="col-12">
-                <input type="email" class="form-control" id="email" placeholder="email" asp-for="Email"/>
+                <input type="email"
+                       class="form-control"
+                       id="email"
+                       placeholder="email"
+                       asp-for="Email"/>
             </div>
             <div class="col-12">
-                <input type="password" class="form-control" id="password" placeholder="password" asp-for="Password"/>
+                <input type="password"
+                       class="form-control"
+                       id="password"
+                       placeholder="password"
+                       asp-for="Password"/>
             </div>
             <div class="col-6 d-grid">
-                <a role="button" class="btn btn-dark" asp-action="SignUp">Sign Up</a>
+                <a role="button"
+                   class="btn btn-dark"
+                   asp-action="SignUp">
+                    Sign Up
+                </a>
             </div>
             <div class="col-6 d-grid">
                 <button type="submit" class="btn btn-dark">Sign In</button>
