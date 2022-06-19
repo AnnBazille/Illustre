@@ -84,8 +84,8 @@ public class MediaService
             model.IsLiked);
     }
 
-    public async Task<ShowImageModel> GetImage(int imageId)
+    public async Task<ShowImageModel> GetImage(int userId, int imageId)
     {
-        return await _mediaRepository.CreateShowImageModel(imageId);
+        return await _mediaRepository.CreateShowImageModel(userId, imageId);
     }
 }

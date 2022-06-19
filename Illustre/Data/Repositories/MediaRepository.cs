@@ -594,11 +594,11 @@ public class MediaRepository : BaseRepository
                     .Select(x => x.Id)
                     .FirstAsync();
 
-                return await CreateShowImageModel(imageId);
+                return await CreateShowImageModel(userId, imageId);
             }
         }
 
-        return await CreateShowImageModel();
+        return await CreateShowImageModel(userId);
     }
 
     public async Task SetReaction(int userId, int imageId, bool isLiked)
@@ -965,7 +965,9 @@ public class MediaRepository : BaseRepository
         return result;
     }
 
-    public async Task<ShowImageModel> CreateShowImageModel(int? imageId = null)
+    public async Task<ShowImageModel> CreateShowImageModel(
+        int userId,
+        int? imageId = null)
     {
         ShowImageModel result;
 
@@ -991,6 +993,13 @@ public class MediaRepository : BaseRepository
                     Title = x.Title,
                 })
                 .FirstAsync();
+
+            var reaction = await DatabaseContext.Reactions
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.AccountId == userId &&
+                                          x.ImageId == imageId);
+
+            result.IsLiked = reaction?.IsLiked;
         }
 
         var tagIds = await DatabaseContext.ImageProperties

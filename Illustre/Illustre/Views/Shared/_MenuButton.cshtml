@@ -1,0 +1,72 @@
+﻿ @inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+
+<div class="illustre-menu-button shadow">
+    <a data-bs-toggle="offcanvas"
+       href="#illustre-offcanvas"
+       role="button"
+       aria-controls="illustre-offcanvas">
+        <div class="illustre-icon" id="illustre-next"></div>
+    </a>
+</div>
+<div class="offcanvas offcanvas-end" tabindex="-1" id="illustre-offcanvas">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title">Illustre</h5>
+    </div>
+    <div class="offcanvas-body illustre-grayscale">
+        <div>
+            @{
+                if (HttpContextAccessor is not null &&
+                    HttpContextAccessor.HttpContext is not null &&
+                    HttpContextAccessor.HttpContext.Request.Cookies
+                        .TryGetValue(
+                            ConstantsHelper.UsernameCookie,
+                            out var usernameCookie) &&
+                    HttpContextAccessor.HttpContext.Request.Cookies
+                        .TryGetValue(
+                            ConstantsHelper.RoleCookie,
+                            out var roleCookie))
+                {
+                    <a asp-controller="Account"
+                       asp-action="Account">
+                        <h5>@usernameCookie</h5>
+                    </a>
+                    <a href="mailto:superadmin@example.com">
+                        <h5>
+                            Contact Support
+                        </h5>
+                    </a>
+                    if (roleCookie == "User")
+                    {
+                        <a asp-controller="Media"
+                           asp-action="Search"
+                           asp-route-isLiked="true">
+                            <h5>
+                                Likes
+                            </h5>
+                            
+                        </a>
+                        <a asp-controller="Media"
+                           asp-action="Search"
+                           asp-route-isLiked="false">
+                            <h5>
+                                Dislikes
+                            </h5>
+                        </a>
+                        <a asp-controller="Media"
+                           asp-action="Search">
+                            <h5>
+                                Tags
+                            </h5>
+                        </a>
+                    }
+                    <a asp-controller="Account"
+                       asp-action="LogOut">
+                        <h5>
+                            Log Out
+                        </h5>
+                    </a>
+                }
+            }
+        </div>
+    </div>
+</div>

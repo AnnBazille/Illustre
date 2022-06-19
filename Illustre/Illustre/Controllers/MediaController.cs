@@ -247,14 +247,21 @@ public class MediaController : CommonController
         return await Execute(
             new Role[] { Role.User },
             imageId,
-            async (imageId) =>
+            async (model) =>
             {
-                var dto = (int)imageId;
+                var array = model as object[];
+                var cookie = array![CookieIndex] as string;
+                var imageId = (int)array[DtoIndex];
+                var userId = await _accountService
+                    .TryGetAccountIdBySessionGuid(cookie!);
 
-                var result = await _mediaService.GetImage(dto);
+                var result = await _mediaService.GetImage(
+                    userId!.Value,
+                    imageId);
 
                 return View("Image", result);
-            });
+            },
+            true);
     }
 
     [HttpGet]

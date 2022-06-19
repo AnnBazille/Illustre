@@ -1,98 +1,24 @@
-﻿ @inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
-
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Illustre</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/Illustre.styles.css" asp-append-version="true" />
-    <link rel="icon" href="~/icons/next-fill.svg" />
+    <link rel="stylesheet"
+          href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet"
+          href="~/css/site.css"
+          asp-append-version="true" />
+    <link rel="stylesheet"
+          href="~/Illustre.styles.css"
+          asp-append-version="true" />
+    <link rel="icon"
+          href="~/icons/next-fill.svg" />
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow" id="illustre-navbar">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Account" asp-action="Index">Illustre</a>
-                <div class="d-flex">
-                    <a class="btn btn-primary" data-bs-toggle="offcanvas" href="#offcanvasExample" role="button" aria-controls="offcanvasExample">Link with href</a>
-                    <a class="illustre-grayscale illustre-navbar-text" href="mailto:superadmin@example.com">Contact Support</a>
-                    @{
-                        if (HttpContextAccessor is not null &&
-                            HttpContextAccessor.HttpContext is not null &&
-                            HttpContextAccessor.HttpContext.Request.Cookies.TryGetValue(ConstantsHelper.UsernameCookie, out var usernameCookie) &&
-                            HttpContextAccessor.HttpContext.Request.Cookies.TryGetValue(ConstantsHelper.RoleCookie, out var roleCookie))
-                        {
-                            <div class="nav-item dropdown illustre-grayscale">
-                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <span>@usernameCookie</span>
-                                </a>
-                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink">
-                                    <li><a class="dropdown-item" asp-controller="Account" asp-action="Account">Account</a></li>
-                                    @{
-                                        if (roleCookie == "User")
-                                            {
-                                                <li><a class="dropdown-item" href="#">Likes</a></li>
-                                                <li><a class="dropdown-item" href="#">Dislikes</a></li>
-                                                <li><a class="dropdown-item" href="#">Tags</a></li>
-                                            }
-                                    }
-                                    <li><a class="dropdown-item" asp-controller="Account" asp-action="LogOut">Log Out</a></li>
-                                </ul>
-                            </div>
-                        }
-                    }
-                </div>
-            </div>
-        </nav>
-<div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
-  <div class="offcanvas-header">
-    <h5 class="offcanvas-title" id="offcanvasExampleLabel">Offcanvas</h5>
-    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-  </div>
-  <div class="offcanvas-body">
-    <div>
-      Some text as placeholder. In real life you can have the elements you have chosen. Like, text, images, lists, etc.
-    </div>
-    <div class="dropdown mt-3">
-      <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown">
-        Dropdown button
-      </button>
-      <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-        <li><a class="dropdown-item" href="#">Action</a></li>
-        <li><a class="dropdown-item" href="#">Another action</a></li>
-        <li><a class="dropdown-item" href="#">Something else here</a></li>
-      </ul>
-    </div>
-  </div>
-</div>
-        @{
-            if (HttpContextAccessor is not null &&
-                HttpContextAccessor.HttpContext is not null &&
-               !HttpContextAccessor.HttpContext.Request.Cookies.TryGetValue(ConstantsHelper.AcceptCookie, out var acceptCookie))
-            {
-                <div class="illustre-form">
-                    <div class="row g-1">
-                        <div class="col-12">
-                            <div class="alert alert-light alert-dismissible fade show" role="alert">
-                                <span>This site uses cookies. By continuing to browse you are agreeing to our use of cookies.</span>
-                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                var options = new CookieOptions()
-                {
-                    Expires = DateTime.UtcNow.AddDays(1),
-                    Domain = HttpContextAccessor.HttpContext.Request.Host.Host,
-                };
-                HttpContextAccessor.HttpContext.Response.Cookies.Append(ConstantsHelper.AcceptCookie, "accept", options);
-            }
-        }
-    </header>
     <div class="container">
+        @await Html.PartialAsync("~/Views/Shared/_MenuButton.cshtml")
+        @await Html.PartialAsync("~/Views/Shared/_AcceptCookie.cshtml")
         <main role="main">
             @RenderBody()
         </main>
