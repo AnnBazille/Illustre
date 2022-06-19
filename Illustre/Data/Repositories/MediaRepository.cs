@@ -1022,4 +1022,103 @@ public class MediaRepository : BaseRepository
 
         return result;
     }
+
+    public async Task<PreviewImagesModel> GetTagsPreviews(int userId, int? skip)
+    {
+        var result = new PreviewImagesModel();
+
+        var tagQuery = DatabaseContext.Reactions
+            .AsNoTracking()
+            .Where(x => x.IsActive &&
+                        x.AccountId == userId &&
+                        x.IsLiked)
+            .Select(x => x.ImageId)
+            .Join(
+            DatabaseContext.ImageProperties.AsNoTracking(),
+            x => x,
+            property => property.ImageId,
+            (x, property) => new
+            {
+                IsActiveProperty = property.IsActive,
+                TagId = property.TagId,
+            })
+            .Where(x => x.IsActiveProperty)
+            .Join(
+            DatabaseContext.Tags.AsNoTracking(),
+            x => x.TagId,
+            tag => tag.Id,
+            (x, tag) => new
+            {
+                IsActiveTag = tag.IsActive,
+                TagId = tag.Id,
+            })
+            .Where(x => x.IsActiveTag)
+            .Select(x => x.TagId)
+            .Distinct();
+
+        result.Total = await tagQuery.CountAsync();
+
+        var tagIds = await tagQuery
+            .OrderByDescending(x => x)
+            .Skip(skip ?? 0)
+            .Take(ConstantsHelper.PageSize)
+            .ToListAsync();
+
+        var query = DatabaseContext.ImageProperties
+            .AsNoTracking()
+            .Where(x => x.IsActive &&
+                        tagIds.Contains(x.TagId))
+            .Join(
+            DatabaseContext.Tags.AsNoTracking(),
+            property => property.TagId,
+            tag => tag.Id,
+            (property, tag) => new
+            {
+                IsActiveTag = tag.IsActive,
+                ImageId = property.ImageId,
+                Title = tag.Title,
+                TagId = tag.Id
+            })
+            .Where(x => x.IsActiveTag)
+            .Join(
+            DatabaseContext.Images.AsNoTracking(),
+            x => x.ImageId,
+            image => image.Id,
+            (x, image) => new
+            {
+                IsActiveImage = image.IsActive,
+                ImageId = image.Id,
+                Title = x.Title,
+                TagId = x.TagId,
+            })
+            .Where(x => x.IsActiveImage);
+
+        var models = new List<PreviewTagModel>();
+
+        foreach (var tag in tagIds)
+        {
+            var model = await query.FirstOrDefaultAsync(x => x.TagId == tag);
+
+            models.Add(new PreviewTagModel()
+            {
+                ImageId = model.ImageId,
+                Title = model.Title,
+                TagId = model.TagId,
+            });
+        }
+
+        foreach (var model in models)
+        {
+            try
+            {
+                model.Image = _blobStorageHelper
+                    .DownloadImage(model.ImageId.ToString());
+            }
+            catch { }
+        }
+
+        result.Images = models;
+
+        return result;
+    }
 }

@@ -326,6 +326,33 @@ public class MediaController : CommonController
             true);
     }
 
+    [HttpGet]
+    public async Task<IActionResult> GetTags(int? skip)
+    {
+        return await Execute(
+            new Role[] { Role.User },
+            skip,
+            async (skip) =>
+            {
+                var array = skip as object[];
+                var dto = array[DtoIndex] as int?;
+                var cookie = array![CookieIndex] as string;
+                var userId = await _accountService
+                    .TryGetAccountIdBySessionGuid(cookie!);
+
+                var result = await _mediaService
+                    .GetTagsPreviews(userId!.Value, dto);
+
+                result.SearchModel = new SearchModel()
+                {
+                    Skip = dto ?? 0,
+                };
+
+                return View(result);
+            },
+            true);
+    }
+
     private string GetManageTagsRedirect(string isFirstAttempt)
     {
         return $"/Media/ManageTags?isFirstAttempt={isFirstAttempt}";

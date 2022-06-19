@@ -88,4 +88,9 @@ public class MediaService
     {
         return await _mediaRepository.CreateShowImageModel(userId, imageId);
     }
+
+    public async Task<PreviewImagesModel> GetTagsPreviews(int userId, int? skip)
+    {
+        return await _mediaRepository.GetTagsPreviews(userId, skip);
+    }
 }
