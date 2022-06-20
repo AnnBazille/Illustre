@@ -1,0 +1,83 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Data.Contracts.Common.FailableRequest">
+    <Position X="3.75" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAI=</HashCode>
+      <FileName>Contracts\Common\FailableRequest.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Data.Contracts.Accounts.AddAccountRequest">
+    <Position X="6.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Contracts\Accounts\AddAccountRequest.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Data.Contracts.Accounts.ManageAccountModel">
+    <Position X="4.5" Y="7" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAACAAAAAAEQAAAAAAAAAAAAACAAAAAAAAAAA=</HashCode>
+      <FileName>Contracts\Accounts\ManageAccountModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Data.Contracts.Accounts.ManageAccountsModel">
+    <Position X="7.5" Y="6.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAgAAAAAAAI=</HashCode>
+      <FileName>Contracts\Accounts\ManageAccountsModel.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Data.Contracts.Accounts.ManageAccountsRequest">
+    <Position X="2" Y="7" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEABAAAAACAEAU=</HashCode>
+      <FileName>Contracts\Accounts\ManageAccountsRequest.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Data.Contracts.Accounts.SignInRequest">
+    <Position X="0.5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAA=</HashCode>
+      <FileName>Contracts\Accounts\SignInRequest.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Data.Contracts.Accounts.SignInResponse">
+    <Position X="0.5" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAEQAAAAAAEAAAAAAAIAAAAAAAAAA=</HashCode>
+      <FileName>Contracts\Accounts\SignInResponse.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Data.Contracts.Accounts.SignUpRequest">
+    <Position X="3.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAAAQAAAAAAAAAAAAACAAAAAAAAAAA=</HashCode>
+      <FileName>Contracts\Accounts\SignUpRequest.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Data.Contracts.Accounts.UpdateAccountRequest">
+    <Position X="7.25" Y="4.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAAAQAAAAAAAAAAAAACAAAAAAAAAAA=</HashCode>
+      <FileName>Contracts\Accounts\UpdateAccountRequest.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Interface Name="Data.Contracts.Common.IManageEntitiesModel">
+    <Position X="10" Y="6.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAI=</HashCode>
+      <FileName>Contracts\Common\IManageEntitiesModel.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Data.Contracts.Common.ISearchable">
+    <Position X="9.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAACAEAU=</HashCode>
+      <FileName>Contracts\Common\ISearchable.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

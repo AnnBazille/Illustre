@@ -1,0 +1,120 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Data.Contracts.Common.FailableRequest">
+    <Position X="7.75" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAI=</HashCode>
+      <FileName>Contracts\Common\FailableRequest.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Data.Contracts.Media.AddImageRequest">
+    <Position X="5" Y="6.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAEAAAAAAAAAAAAAEAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Contracts\Media\AddImageRequest.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Data.Contracts.Media.AddTagRequest">
+    <Position X="4.25" Y="8.25" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAEAAAAAAAAAAAAAAAAEAAAAAAAAAAAQ=</HashCode>
+      <FileName>Contracts\Media\AddTagRequest.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Data.Contracts.Media.EditImageModel">
+    <Position X="7.5" Y="3.75" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAE=</HashCode>
+      <FileName>Contracts\Media\EditImageModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Data.Contracts.Media.EditImagesRequest">
+    <Position X="10.5" Y="4" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Contracts\Media\EditImagesRequest.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Data.Contracts.Media.EditTagModel">
+    <Position X="7.75" Y="11.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAA=</HashCode>
+      <FileName>Contracts\Media\EditTagModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Data.Contracts.Media.EditTagsRequest">
+    <Position X="10.75" Y="11" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Contracts\Media\EditTagsRequest.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Data.Contracts.Media.ManageImageModel">
+    <Position X="7.5" Y="5.25" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAEAAEAAAAAAAAAAAABAAAAAAAAAAAAA=</HashCode>
+      <FileName>Contracts\Media\ManageImageModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Data.Contracts.Media.ManageImagesModel">
+    <Position X="5" Y="4.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAgAAAAAAAI=</HashCode>
+      <FileName>Contracts\Media\ManageImagesModel.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Data.Contracts.Media.ManageImagesRequest">
+    <Position X="9.75" Y="5.5" Width="3.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAQAAAAAAAAAAAAAAAAAAAAAEAAAAAAACAEAU=</HashCode>
+      <FileName>Contracts\Media\ManageImagesRequest.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Data.Contracts.Media.ManageTagModel">
+    <Position X="7.75" Y="9.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAEAAEAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Contracts\Media\ManageTagModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Data.Contracts.Media.ManageTagsModel">
+    <Position X="4.25" Y="12" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAgAAAAAAAI=</HashCode>
+      <FileName>Contracts\Media\ManageTagsModel.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Data.Contracts.Media.ManageTagsRequest">
+    <Position X="10.25" Y="8.25" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAACAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAACAEAU=</HashCode>
+      <FileName>Contracts\Media\ManageTagsRequest.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Data.Contracts.Media.UpdateTagRequest">
+    <Position X="4.25" Y="10.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Contracts\Media\UpdateTagRequest.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Interface Name="Data.Contracts.Common.IManageEntitiesModel">
+    <Position X="7.25" Y="12.75" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAI=</HashCode>
+      <FileName>Contracts\Common\IManageEntitiesModel.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Data.Contracts.Common.ISearchable">
+    <Position X="10.5" Y="12.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAACAEAU=</HashCode>
+      <FileName>Contracts\Common\ISearchable.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

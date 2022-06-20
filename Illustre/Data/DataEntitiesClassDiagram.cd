@@ -1,0 +1,60 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Data.Entities.Common.BaseEntity">
+    <Position X="5.25" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Entities\Common\BaseEntity.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Data.Entities.Common.NamedEntity">
+    <Position X="5.5" Y="1" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Entities\Common\NamedEntity.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Data.Entities.Account">
+    <Position X="2" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AADAAAAAACACAAAAEQAAAAAAEAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Entities\Account.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Data.Entities.Image">
+    <Position X="9" Y="1.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Entities\Image.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Data.Entities.ImageProperty">
+    <Position X="7.75" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAgAAAAAAAAAAAAAAAAABEAAAAAAAAAAAE=</HashCode>
+      <FileName>Entities\ImageProperty.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Data.Entities.Reaction">
+    <Position X="2" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAgAAAAAABAAAABEAAAAAAAAAAEA=</HashCode>
+      <FileName>Entities\Reaction.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Data.Entities.Tag">
+    <Position X="7.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Entities\Tag.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Enum Name="Data.Entities.Role">
+    <Position X="3.75" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAAABAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Entities\Role.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
